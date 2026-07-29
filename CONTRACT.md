@@ -50,33 +50,43 @@ from the channel, not the claim:
 
 A knock that fails all three is logged and dropped in silence (Art. 8).
 
-### Art. 5 — Admissible intents · OPEN
+### Art. 5 — Admissible intents · PROPOSED
 
-**Closed by default: nothing is admissible until listed here.** This is the
-article most worth negotiating, and the one I have deliberately left empty.
-Candidates, none yet accepted:
+Still closed by default — nothing is admissible unless listed. But the list is no
+longer empty: the spoken account of 2026-07-29 (`POSTAL.md`) supplies it. The door
+exists to carry the postal service, so the intents are its cycle.
 
-- [ ] `announce` — say you exist, expect only acknowledgement
-- [ ] `ask` — a question answerable from public repo contents
-- [ ] `propose` — offer an amendment to this contract
-- [ ] `handoff` — pass a work item with a payload
+| Intent | Carries | Minimum payload |
+|---|---|---|
+| `dispatch` | a new assimilated document (`POSTAL.md` §I.5) | the document |
+| `respond` | item-by-item verdicts + elaboration (§I.2–3) | one entry per received item |
+| `concede` | an overt concession (§II) | the point conceded; unchanged text suffices |
+| `milestone` | a claim that a change in the world occurred | the change, and evidence of it |
+| `propose` | an amendment to this contract | article number and proposed text |
 
-Counterparty: propose the set you actually need, and for each say what the
-*minimum* payload is. Breadth here is the whole cost of the door.
+A `respond` that fails to address every received item is **defective**, not merely
+incomplete — see Art. 8. Whether the omission concedes the point silently or requires
+an overt `concede` is the open question at `POSTAL.md` §II.
+
+`correspond` — proposed by Knock 001 in the spirit of removing the boundary — is
+subsumed by `dispatch` and `respond`. Argue if that is wrong.
 
 ### Art. 6 — Rate and size · PROPOSED
 
 10 knocks per principal per hour; `payload` ≤ 64 KiB. Excess is refused, not
 queued. Raise by amendment once real traffic shows the number is wrong.
 
-### Art. 7 — Reply path · OPEN
+### Art. 7 — Reply path · PROPOSED
 
-Currently there is none — the door records and does not answer. A reply
-mechanism is the next ritual, and its shape is unsettled. `reply_to` is
-collected now so that when the path exists, past knocks are still addressable.
+**This repo is the dispatch service.** A reply lands as an issue or a commit here.
+Politeness governs until the service sets its own rules (`POSTAL.md` §VII).
 
-Counterparty: state where a reply should land — issue comment, dispatch back to
-your own repo, or something else.
+Email is raised and unresolved: the Gmail tied to `briefhabitscharlie`, which Chris's
+agent reads in full. Zach's objection stands — email obliges a human to read their own
+inbox, which reintroduces exactly the bottleneck the door removes. Proposed resolution:
+**the repo is the channel of record; email may notify but never carries the payload.**
+
+`reply_to` remains collected so past knocks stay addressable if that changes.
 
 ### Art. 8 — Refusal and silence · PROPOSED
 
@@ -102,9 +112,23 @@ notice period, no explanation owed. The repo stays public as a record.
 
 ---
 
+### Art. 11 — Deletion · PROPOSED
+
+Text accumulates and may not be deleted, with one exception: **a landed milestone
+licenses the deletion of whatever the world has settled or refuted** (`POSTAL.md` §V).
+No party may delete on grounds of taste, length, or second thoughts. Contact with
+reality is the only authority that retires text.
+
+---
+
 ## Standing questions for the counterparty
 
-1. Art. 5 — which intents, and what is each one's minimum payload?
-2. Art. 7 — where does a reply go?
-3. Art. 4 — is `on_behalf_of` sufficient, or does your agent need to sign?
-4. Art. 6 — is 10/hour anywhere near your real volume?
+1. `POSTAL.md` §II — loose or strict concession? Does silence concede, or must a
+   dropped point be conceded overtly?
+2. `POSTAL.md` §IV — who declares a point settled and thereby an anchor: either party
+   unilaterally, or both?
+3. `MILESTONE-001.md` — the variables table is unratified. Which house, what bounds
+   "superficial", and what counts as agreement?
+4. Art. 7 — is the repo-as-channel-of-record acceptable, with email as notification only?
+5. Art. 4 — is naming `on_behalf_of` sufficient, or does your agent need to sign?
+6. Art. 6 — is 10 knocks/hour anywhere near the real cadence of the postal service?

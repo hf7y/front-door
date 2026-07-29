@@ -4,21 +4,28 @@
 #   bin/ping "milestone 001 due tomorrow"
 #   bin/ping -s "front-door" -f body.md
 #   echo "..." | bin/ping
+#   bin/ping --all "..."        try every transport, not just the first that works
 #
-# Transport order: hermes send (configured platform) -> notify-send (desktop) -> stderr.
+# Transport order, best reach first:
+#   1. hermes send   — WhatsApp/Signal/etc. Reaches the phone anywhere.
+#   2. KDE Connect   — paired phone, same LAN only. Free, no cloud.
+#   3. notify-send   — this desktop only.
+#   4. stderr        — loud, so an undelivered ping is never silent.
 # Exit 0 if any transport delivered, 1 if none did.
 set -uo pipefail
 
 SUBJECT="front-door"
 BODY=""
 TARGET="${FRONT_DOOR_PING_TARGET:-}"
+ALL=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
     -s|--subject) SUBJECT="$2"; shift 2 ;;
     -f|--file)    BODY="$(cat -- "$2")"; shift 2 ;;
     -t|--to)      TARGET="$2"; shift 2 ;;
-    -h|--help)    sed -n '2,10p' "$0"; exit 0 ;;
+    --all)        ALL=1; shift ;;
+    -h|--help)    sed -n '2,16p' "$0"; exit 0 ;;
     *)            BODY="${BODY:+$BODY }$1"; shift ;;
   esac
 done
@@ -26,47 +33,17 @@ done
 [ -n "${BODY//[[:space:]]/}" ] || { echo "ping: empty message" >&2; exit 2; }
 
 delivered=0
+skip() { [ "$ALL" -eq 0 ] && [ "$delivered" -eq 1 ]; }
 
-# 1. KDE Connect — straight to the paired phone. No cloud, no account, no cost.
-#    Set FRONT_DOOR_SMS_TO=+15551234567 to send a real SMS instead of a
-#    notification. Unset, it pushes a phone notification, which is free.
-if command -v kdeconnect-cli >/dev/null 2>&1; then
-  DEV="${FRONT_DOOR_KDE_DEVICE:-}"
-  if [ -z "$DEV" ]; then
-    DEV="$(kdeconnect-cli --list-devices 2>/dev/null \
-      | grep 'paired and reachable' \
-      | sed -n 's/.*: \([0-9a-f]\{8,\}\).*/\1/p' | head -1)"
-  fi
-  if [ -n "$DEV" ]; then
-    if [ -n "${FRONT_DOOR_SMS_TO:-}" ]; then
-      if kdeconnect-cli -d "$DEV" --send-sms "$SUBJECT: $BODY" \
-           --destination "$FRONT_DOOR_SMS_TO" 2>/dev/null; then
-        echo "ping: delivered as SMS to $FRONT_DOOR_SMS_TO via $DEV" >&2
-        delivered=1
-      else
-        echo "ping: kdeconnect SMS failed (phone reachable?)" >&2
-      fi
-    fi
-    if [ "$delivered" -eq 0 ]; then
-      if kdeconnect-cli -d "$DEV" --ping-msg "$SUBJECT: $BODY" 2>/dev/null; then
-        echo "ping: delivered as phone notification via $DEV" >&2
-        delivered=1
-      fi
-    fi
-  else
-    echo "ping: no paired-and-reachable kdeconnect device" >&2
-  fi
-fi
-
-if [ "$delivered" -eq 0 ] && command -v hermes >/dev/null 2>&1; then
-  # Discover a target if none was given: first configured channel.
-  # Guard against parsing hermes' "nothing configured" prose as a target name.
+# 1. hermes — configured messaging platform (WhatsApp, Signal, ...). Best reach:
+#    works wherever the phone has data, not just on the home network.
+if ! skip && command -v hermes >/dev/null 2>&1; then
   if [ -z "$TARGET" ]; then
     listing="$(hermes send --list 2>/dev/null)"
     case "$listing" in
       *"No messaging platforms"*|*"no channels discovered"*|'') TARGET="" ;;
       *) TARGET="$(printf '%s\n' "$listing" \
-           | grep -oE '\b(telegram|discord|slack|signal|whatsapp)(:[^[:space:]]+)?' \
+           | grep -oE '\b(whatsapp|signal|telegram|discord|slack)(:[^[:space:]]+)?' \
            | head -1)" ;;
     esac
   fi
@@ -78,17 +55,50 @@ if [ "$delivered" -eq 0 ] && command -v hermes >/dev/null 2>&1; then
       echo "ping: hermes send failed for target '$TARGET'" >&2
     fi
   else
-    echo "ping: hermes has no configured platform — run 'hermes gateway setup'" >&2
+    echo "ping: hermes has no configured platform — run 'hermes whatsapp'" >&2
   fi
 fi
 
-if [ "$delivered" -eq 0 ] && command -v notify-send >/dev/null 2>&1; then
+# 2. KDE Connect — straight to the paired phone. Same LAN only.
+#    Set FRONT_DOOR_SMS_TO=+15551234567 to send a real SMS through the phone.
+if ! skip && command -v kdeconnect-cli >/dev/null 2>&1; then
+  DEV="${FRONT_DOOR_KDE_DEVICE:-}"
+  if [ -z "$DEV" ]; then
+    DEV="$(kdeconnect-cli --list-devices 2>/dev/null \
+      | grep 'paired and reachable' \
+      | sed -n 's/.*: \([0-9a-f]\{8,\}\).*/\1/p' | head -1)"
+  fi
+  if [ -n "$DEV" ]; then
+    sent=0
+    if [ -n "${FRONT_DOOR_SMS_TO:-}" ]; then
+      if kdeconnect-cli -d "$DEV" --send-sms "$SUBJECT: $BODY" \
+           --destination "$FRONT_DOOR_SMS_TO" 2>/dev/null; then
+        echo "ping: delivered as SMS to $FRONT_DOOR_SMS_TO via $DEV" >&2
+        sent=1; delivered=1
+      else
+        echo "ping: kdeconnect SMS failed (phone reachable?)" >&2
+      fi
+    fi
+    if [ "$sent" -eq 0 ]; then
+      if kdeconnect-cli -d "$DEV" --ping-msg "$SUBJECT: $BODY" 2>/dev/null; then
+        echo "ping: delivered as phone notification via $DEV" >&2
+        delivered=1
+      fi
+    fi
+  else
+    echo "ping: no paired-and-reachable kdeconnect device" >&2
+  fi
+fi
+
+# 3. This desktop.
+if ! skip && command -v notify-send >/dev/null 2>&1; then
   if notify-send -u normal -- "$SUBJECT" "$BODY" 2>/dev/null; then
     echo "ping: delivered via notify-send (desktop only)" >&2
     delivered=1
   fi
 fi
 
+# 4. Never fail silently.
 if [ "$delivered" -eq 0 ]; then
   printf '\n=== PING UNDELIVERED: %s ===\n%s\n===\n' "$SUBJECT" "$BODY" >&2
   exit 1

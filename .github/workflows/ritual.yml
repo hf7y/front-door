@@ -40,6 +40,9 @@ jobs:
       - name: Read the clock
         run: node protocol/clock.mjs | tee -a "$GITHUB_STEP_SUMMARY"
 
+      - name: Test the ratification parser
+        run: node protocol/ratify.test.mjs
+
       - name: Self-test the validator
         run: |
           set -e

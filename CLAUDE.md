@@ -28,6 +28,9 @@ a validator, an exit code, or a generated document. If it can, make it that.
 | `node protocol/validate.mjs <f>` | validate a knock; exit 1 refuses, with reasons |
 | `node protocol/clock.mjs --ping` | read milestone deadlines; ping if due |
 | `bin/ping "msg"` | reach Zach off-repo (hermes → notify-send) |
+| `bin/watch --once` | one sweep for knocks, PRs, failed rituals, due milestones |
+| `node protocol/ratify.mjs <pr>` | tally Art. 9 ratifications on a PR |
+| `node protocol/ratify.test.mjs` | 22 cases on the email-reply parser |
 
 No dependencies. Node only. `FRONT_DOOR_TODAY=YYYY-MM-DD` injects a date for testing.
 
@@ -36,6 +39,22 @@ No dependencies. Node only. `FRONT_DOOR_TODAY=YYYY-MM-DD` injects a date for tes
 Commit, push, and open or comment on issues **without asking**. Maximum agency inside
 this repo. Still confirm before: rewriting shared history, changing repo visibility or
 collaborator access, or anything reaching outside the repo.
+
+## NEVER write APPROVE
+
+**An agent operating in this repo uses `@hf7y`'s credentials.** `protocol/ratify.mjs`
+counts a comment saying `APPROVE` from a principal's login as that principal's Art. 9
+ratification. It cannot tell Zach from an agent acting as Zach.
+
+So: **never write the word APPROVE (or APPROVED) in a comment on a pull request in this
+repo, in any context, including quoting someone else.** Doing so forges a principal's
+consent and can merge an amendment neither human agreed to. Say "ratified", "accepted",
+or "concede" when you mean it descriptively. If you must refer to the token, write it as
+`A-P-P-R-O-V-E`.
+
+This is a known weakness of the mechanism, not a feature. The proper fix is a separate
+bot identity so the logins differ; until then this rule is the only thing standing
+between an agent and forged ratification.
 
 ## Invariants
 

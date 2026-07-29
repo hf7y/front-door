@@ -1,0 +1,100 @@
+name: ratify
+
+# Art. 9 by machine. A principal ratifies an amendment by approving the PR, OR
+# by replying APPROVE to the GitHub notification email — no browser, no terminal.
+# The PR merges only when EVERY required principal has ratified. One yes is
+# recorded and waits; it never merges alone.
+
+on:
+  issue_comment:
+    types: [created]
+  pull_request_review:
+    types: [submitted]
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  # When an amendment PR opens, post plain-language instructions. This comment is
+  # what arrives in a principal's inbox, and replying to it is how they ratify.
+  instructions:
+    if: github.event_name == 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post the ratification card
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          cat > card.md <<'CARD'
+          ## To ratify this amendment: reply **APPROVE** to this email
+
+          That is the whole procedure. No browser, no terminal, no app.
+
+          - Reply `APPROVE` — your ratification is recorded.
+          - Reply anything else, or nothing — it is not.
+          - It merges only once **both** principals have replied. One yes waits for the other.
+          - Changed your mind before it merges? Reply `NOT APPROVED`.
+
+          Quoted text in your reply is ignored, so an `APPROVE` appearing in the
+          quoted history below cannot ratify anything by accident.
+          CARD
+          gh pr comment "$PR" --body-file card.md
+
+  ratify:
+    if: github.event_name != 'pull_request_target'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Is this about a pull request?
+        id: gate
+        env:
+          IS_PR: ${{ github.event.issue.pull_request != null || github.event_name == 'pull_request_review' }}
+        run: echo "go=$IS_PR" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.go == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.gate.outputs.go == 'true'
+        with: { node-version: '22' }
+
+      - name: Tally ratifications
+        if: steps.gate.outputs.go == 'true'
+        id: tally
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR: ${{ github.event.issue.number || github.event.pull_request.number }}
+        run: |
+          node protocol/ratify.mjs "$PR" > tally.json
+          cat tally.json
+          {
+            echo "complete=$(jq -r .complete tally.json)"
+            echo "pending=$(jq -r '.pending | join(", ")' tally.json)"
+            echo "ratified=$(jq -r '.ratified | keys | join(", ")' tally.json)"
+            echo "pr=$PR"
+          } >> "$GITHUB_OUTPUT"
+          { echo '### Art. 9 tally'; echo '```json'; cat tally.json; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
+      # Record a partial ratification so the principal knows it landed.
+      - name: Record, and say who is still needed
+        if: steps.gate.outputs.go == 'true' && steps.tally.outputs.complete == 'false' && steps.tally.outputs.ratified != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment "${{ steps.tally.outputs.pr }}" --body \
+            "Ratification recorded: **${{ steps.tally.outputs.ratified }}**. Still required under Art. 9: **${{ steps.tally.outputs.pending }}**. Not merged."
+
+      - name: Both principals ratified — merge (Art. 9 satisfied)
+        if: steps.gate.outputs.go == 'true' && steps.tally.outputs.complete == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          PR="${{ steps.tally.outputs.pr }}"
+          gh pr comment "$PR" --body \
+            "Art. 9 satisfied — ratified by **${{ steps.tally.outputs.ratified }}**. Merging. The commit that lands this amendment is the record of when the terms changed."
+          gh pr merge "$PR" --squash --delete-branch

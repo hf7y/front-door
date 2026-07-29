@@ -34,9 +34,14 @@
       "description": "Intent-specific body. Capped at 64 KiB (Art. 6). Shape per intent is part of the Art. 5 negotiation.",
       "type": ["object", "array", "string", "null"]
     },
+    "channel": {
+      "type": "string",
+      "description": "Which channel this knock arrived on (Art. 2). A repository_dispatch knock must also supply reply_to.",
+      "enum": ["issue", "repository_dispatch"]
+    },
     "reply_to": {
       "type": "string",
-      "description": "Where a response should land, once a reply path exists (Art. 7). Collected now so past knocks stay addressable.",
+      "description": "The canonical GitHub issue where a reply is recorded (Art. 7). Required when channel is repository_dispatch. Email and off-repo interfaces may notify or relay but are never the canonical record.",
       "maxLength": 512
     },
     "nonce": {
@@ -49,6 +54,10 @@
     {
       "if": { "properties": { "kind": { "const": "agent-for-human" } }, "required": ["kind"] },
       "then": { "required": ["on_behalf_of"] }
+    },
+    {
+      "if": { "properties": { "channel": { "const": "repository_dispatch" } }, "required": ["channel"] },
+      "then": { "required": ["reply_to"] }
     }
   ],
   "examples": [

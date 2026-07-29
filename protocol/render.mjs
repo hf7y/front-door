@@ -40,10 +40,17 @@ function contract() {
   L.push('', `A \`respond\` that fails to address every received item is **defective** — enforced by ${p.intents.respond.enforced_by}.`, '');
 
   L.push('### Art. 6 — Rate and size', '',
-    `${p.limits.knocks_per_principal_per_hour} knocks per principal per hour; payload ≤ ${p.limits.payload_max_bytes} bytes. Excess is refused, not queued.`, '');
+    `${p.limits.new_knocks_per_principal_per_hour} new knocks per principal per hour; ${p.limits.issue_replies_per_principal_per_hour} issue replies per principal per hour; payload ≤ ${p.limits.payload_max_bytes} bytes. Excess is \`${p.limits.excess}\`.`, '',
+    `*${p.limits.rationale}*`, '');
 
-  L.push('### Art. 7 — Reply path', '',
-    `The channel of record is ${p.channel_of_record}. Email may notify (\`${p.email_policy.may_notify}\`) but may never carry payload (\`${p.email_policy.may_carry_payload}\`) — ${p.email_policy.rationale}`, '');
+  L.push('### Art. 7 — Reply path', '', p.reply_path.rule, '',
+    '| Term | Value |', '|---|---|',
+    `| default | \`${p.reply_path.default}\` |`,
+    `| amendment also requires | \`${p.reply_path.amendment_also_requires}\` |`,
+    `| \`repository_dispatch\` requires \`reply_to\` | \`${p.reply_path.repository_dispatch_requires_reply_to}\` |`,
+    `| canonical target | \`${p.reply_path.canonical_target}\` |`,
+    `| off-repo interfaces | \`${p.reply_path.off_repo_interfaces}\` |`,
+    '', `Email may notify (\`${p.email_policy.may_notify}\`) but may never carry payload (\`${p.email_policy.may_carry_payload}\`) — ${p.email_policy.rationale} Enforced by ${p.reply_path.enforced_by}.`, '');
 
   L.push('### Art. 8 — Refusal and silence', '',
     `- **Refusal** — ${p.outcomes.refusal}`, `- **Silence** — ${p.outcomes.silence}`, '',
@@ -78,7 +85,8 @@ function postal() {
   L.push('## II. The debate rule', '',
     `Address every point: \`${tick(p.debate_rule.must_address_every_point)}\`. An unaddressed point is defeated: \`${tick(p.debate_rule.unaddressed_point_is_defeated)}\`.`, '',
     `**Concession form:** ${p.debate_rule.concession_form}. This makes the diff itself the record of what is contested.`, '',
-    `**Concession mode: ${open(p.debate_rule.concession_mode)}.** ${p.debate_rule.concession_mode.question}`, '');
+    `**Concession mode: ${open(p.debate_rule.concession_mode)}${p.debate_rule.concession_mode.decided ? ` — \`${p.debate_rule.concession_mode.decided}\`` : ''}.** ${p.debate_rule.concession_mode.rule ?? p.debate_rule.concession_mode.question}`, '');
+  if (p.debate_rule.concession_mode.rationale) L.push(`*${p.debate_rule.concession_mode.rationale}*`, '');
   for (const [k, v] of Object.entries(p.debate_rule.concession_mode.options)) L.push(`- \`${k}\` — ${v}`);
   L.push('');
 
@@ -89,7 +97,9 @@ function postal() {
 
   L.push('## IV. Milestones', '', `> ${p.milestone_definition}`, '',
     `Consensus is a milestone (\`${tick(p.consensus.is_a_milestone)}\`), scoped to ${p.consensus.scope}. Settled points become **${p.consensus.settled_points_become}**, whose purpose is structural: ${p.consensus.anchor_purpose}.`, '',
-    `**Settle authority: ${open(p.consensus.settle_authority)}.** ${p.consensus.settle_authority.question}`, '');
+    `**Settle authority: ${open(p.consensus.settle_authority)}${p.consensus.settle_authority.decided ? ` — \`${p.consensus.settle_authority.decided}\`` : ''}.** ${p.consensus.settle_authority.rule ?? p.consensus.settle_authority.question}`, '');
+  if (p.consensus.settle_authority.note) L.push('', `*${p.consensus.settle_authority.note}*`);
+  L.push('');
 
   L.push('## V. Deletion', '',
     `${p.deletion.default}. Exception: ${p.deletion.sole_exception}. ${p.deletion.rationale}`, '');

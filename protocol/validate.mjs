@@ -36,6 +36,14 @@ export function validate(k) {
     }
   }
 
+  // Art. 7 — reply path. A repository_dispatch knock must name its canonical issue.
+  if (P.reply_path?.repository_dispatch_requires_reply_to && k?.channel === 'repository_dispatch' && !k.reply_to) {
+    errs.push(`channel repository_dispatch requires reply_to naming the canonical ${P.reply_path.canonical_target} (Art. 7)`);
+  }
+  if (k?.intent === 'propose' && P.reply_path?.amendment_also_requires === 'pull_request' && !k.payload?.pull_request) {
+    errs.push('intent propose requires payload.pull_request — an amendment must reference a PR containing the exact change (Art. 7)');
+  }
+
   // Art. 6 — size.
   const bytes = Buffer.byteLength(JSON.stringify(k?.payload ?? null), 'utf8');
   if (bytes > P.limits.payload_max_bytes) errs.push(`payload ${bytes} bytes exceeds ${P.limits.payload_max_bytes} (Art. 6)`);

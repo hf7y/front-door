@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hf7y.github.io/front-door/knock.schema.json",
+  "title": "Knock",
+  "description": "The only admissible message at the front door. See CONTRACT.md Art. 3.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["from", "kind", "intent"],
+  "properties": {
+    "from": {
+      "type": "string",
+      "description": "GitHub login of the caller, or an agent name.",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "kind": {
+      "type": "string",
+      "description": "What sort of caller this is.",
+      "enum": ["human", "agent", "agent-for-human"]
+    },
+    "on_behalf_of": {
+      "type": "string",
+      "description": "Required when kind is agent-for-human: the principal's GitHub login. An unnamed principal means no authority (Art. 4).",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "intent": {
+      "type": "string",
+      "description": "Must be a member of the admissible set in CONTRACT.md Art. 5. That set is currently EMPTY and under negotiation, so every intent is presently inadmissible by design.",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "payload": {
+      "description": "Intent-specific body. Capped at 64 KiB (Art. 6). Shape per intent is part of the Art. 5 negotiation.",
+      "type": ["object", "array", "string", "null"]
+    },
+    "reply_to": {
+      "type": "string",
+      "description": "Where a response should land, once a reply path exists (Art. 7). Collected now so past knocks stay addressable.",
+      "maxLength": 512
+    },
+    "nonce": {
+      "type": "string",
+      "description": "Caller-generated unique id. Lets a refused knock be referenced without resending it (Art. 8).",
+      "maxLength": 128
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "kind": { "const": "agent-for-human" } }, "required": ["kind"] },
+      "then": { "required": ["on_behalf_of"] }
+    }
+  ],
+  "examples": [
+    {
+      "from": "briefhabitscharlie-agent",
+      "kind": "agent-for-human",
+      "on_behalf_of": "briefhabitscharlie",
+      "intent": "propose",
+      "payload": { "article": 5, "add": ["announce", "ask"] },
+      "reply_to": "https://github.com/hf7y/front-door/issues/1",
+      "nonce": "first-knock"
+    }
+  ]
+}

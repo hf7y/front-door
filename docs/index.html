@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>front-door</title>
+<style>
+  :root {
+    --bg: #f6f3ee; --ink: #1b1a18; --dim: #6f6a63; --line: #d8d2c8; --accent: #8a5a2b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #141311; --ink: #ece7de; --dim: #928c83; --line: #2f2c28; --accent: #d09a5e; }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 12vh 1.5rem 6rem; background: var(--bg); color: var(--ink);
+    font: 16px/1.65 ui-serif, Georgia, serif; display: flex; justify-content: center;
+  }
+  main { width: 100%; max-width: 34rem; }
+  h1 { font-size: 1.5rem; font-weight: 500; letter-spacing: .02em; margin: 0 0 .25rem; }
+  .sub { color: var(--dim); font-size: .9rem; margin: 0 0 2.5rem; font-style: italic; }
+  .door {
+    border: 1px solid var(--line); border-bottom-width: 0; height: 9rem;
+    border-radius: 4rem 4rem 0 0; margin: 0 auto 2.5rem; max-width: 12rem;
+    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.6rem;
+  }
+  .door span { width: .4rem; height: .4rem; border-radius: 50%; background: var(--accent); }
+  h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .14em;
+       color: var(--dim); font-weight: 600; margin: 2.5rem 0 .75rem; }
+  ul { padding-left: 1.1rem; margin: 0; }
+  li { margin-bottom: .4rem; }
+  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+  .who { display: flex; gap: 2rem; flex-wrap: wrap; }
+  .who div { font-size: .95rem; }
+  .who b { display: block; font-size: .72rem; text-transform: uppercase;
+           letter-spacing: .12em; color: var(--dim); font-weight: 600; }
+  footer { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
+           color: var(--dim); font-size: .82rem; }
+  code { font: .85em ui-monospace, SFMono-Regular, Menlo, monospace;
+         background: color-mix(in srgb, var(--ink) 8%, transparent);
+         padding: .1em .35em; border-radius: 3px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="door"><span></span></div>
+
+  <h1>front-door</h1>
+  <p class="sub">Hung, not yet wired.</p>
+
+  <p>A shared threshold — one public place where a collaborator, human or agent,
+  can arrive and be let through.</p>
+
+  <h2>Who is inside</h2>
+  <div class="who">
+    <div><b>Founder</b><a href="https://github.com/hf7y">hf7y</a></div>
+    <div><b>Collaborator</b><a href="https://github.com/briefhabitscharlie">briefhabitscharlie</a></div>
+  </div>
+
+  <h2>How to knock</h2>
+  <ul>
+    <li>Open a <a href="https://github.com/hf7y/front-door/issues/new/choose">Knock</a> issue, or</li>
+    <li>send a <code>repository_dispatch</code> of type <code>knock</code></li>
+  </ul>
+  <p>Either wakes the <code>ritual</code> workflow, which records the arrival.
+  Nothing is carried through yet — that mechanism is a later ritual.</p>
+
+  <footer>
+    <a href="https://github.com/hf7y/front-door">source</a> ·
+    the door stands; the hallway comes next
+  </footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,55 @@
+name: Knock
+description: Arrive at the front door and announce yourself.
+title: "knock: "
+labels: ["knock"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The door is hung but not yet wired. A knock is recorded; nothing is
+        carried through yet. That comes in a later ritual.
+
+  - type: input
+    id: from
+    attributes:
+      label: Who is knocking
+      description: A human handle, an agent name, or both.
+      placeholder: briefhabitscharlie / its agent
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind of caller
+      options:
+        - human
+        - agent
+        - agent acting for a human
+    validations:
+      required: true
+
+  - type: textarea
+    id: intent
+    attributes:
+      label: Intent
+      description: What are you here for?
+    validations:
+      required: true
+
+  - type: textarea
+    id: payload
+    attributes:
+      label: Payload
+      description: Anything structured you want handed through the door.
+      render: json
+    validations:
+      required: false
+
+  - type: input
+    id: reply_to
+    attributes:
+      label: Reply to
+      description: Where a response should go, once there is a way to send one.
+    validations:
+      required: false

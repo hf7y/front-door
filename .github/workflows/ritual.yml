@@ -1,0 +1,48 @@
+name: ritual
+
+# The dispatch half of the front door. Listens on three channels; for now it only
+# records that someone arrived. Wiring the door to a destination is a later ritual.
+
+on:
+  issues:
+    types: [opened, labeled]
+  repository_dispatch:
+    types: [knock]
+  workflow_dispatch:
+    inputs:
+      from:
+        description: Who is knocking
+        required: true
+        type: string
+      intent:
+        description: What they are here for
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  answer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Record the knock
+        env:
+          CHANNEL: ${{ github.event_name }}
+          FROM: ${{ github.event.client_payload.from || inputs.from || github.actor }}
+          INTENT: ${{ github.event.client_payload.intent || inputs.intent || github.event.issue.title }}
+        run: |
+          {
+            echo "### A knock at the front door"
+            echo
+            echo "- channel: \`$CHANNEL\`"
+            echo "- from: \`$FROM\`"
+            echo "- intent: $INTENT"
+            echo
+            echo "The door is hung, not wired. Nothing was carried through."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # --- later ritual: dispatch onward from here ---
+      # - name: Carry through
+      #   run: ...

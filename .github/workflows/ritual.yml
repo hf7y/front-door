@@ -69,7 +69,15 @@ jobs:
             echo "### A knock at the front door"
             echo '```json'; cat knock.json; echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          if node protocol/validate.mjs knock.json 2>&1 | tee result.txt; then
+          # Capture the validator's own status. Do NOT pipe into tee here: a
+          # pipeline reports the LAST command's status, so `validate | tee` always
+          # succeeds and every knock would be admitted unchecked.
+          set +e
+          node protocol/validate.mjs knock.json > result.txt 2>&1
+          rc=$?
+          set -e
+          cat result.txt
+          if [ "$rc" -eq 0 ]; then
             echo "admissible=true" >> "$GITHUB_OUTPUT"
           else
             echo "admissible=false" >> "$GITHUB_OUTPUT"

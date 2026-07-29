@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+# Watch the front door. One stdout line per event; nothing when quiet.
+#
+#   bin/watch            poll forever (default 60s)
+#   bin/watch --once     single sweep, then exit
+#   bin/watch -i 30      set interval
+#
+# Watches for: knocks and comments from anyone other than the repo owner,
+# failed workflow runs, and milestone deadlines coming due.
+# State lives in .watch-state (gitignored) so restarts don't replay history.
+set -uo pipefail
+
+REPO="${FRONT_DOOR_REPO:-hf7y/front-door}"
+OWNER="${REPO%%/*}"
+INTERVAL=60
+ONCE=0
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+STATE="$ROOT/.watch-state"
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --once)        ONCE=1; shift ;;
+    -i|--interval) INTERVAL="$2"; shift 2 ;;
+    -h|--help)     sed -n '2,10p' "$0"; exit 0 ;;
+    *)             echo "watch: unknown arg $1" >&2; exit 2 ;;
+  esac
+done
+
+SINCE="$(cat "$STATE" 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
+SEEN_RUNS="$ROOT/.watch-runs"; touch "$SEEN_RUNS" 2>/dev/null || true
+
+sweep() {
+  local now; now="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+  # Comments not written by the owner — i.e. the collaborator arriving.
+  gh api "repos/$REPO/issues/comments?since=$SINCE&per_page=100" \
+    --jq ".[] | select(.user.login != \"$OWNER\") | \"knock: comment by \(.user.login) on issue \(.issue_url | split(\"/\") | last) — \(.html_url)\"" \
+    2>/dev/null || true
+
+  # New or reopened issues not opened by the owner.
+  gh api "repos/$REPO/issues?state=all&since=$SINCE&per_page=100" \
+    --jq ".[] | select(.user.login != \"$OWNER\") | select(.pull_request == null) | \"knock: issue #\(.number) \(.state) by \(.user.login) — \(.title)\"" \
+    2>/dev/null || true
+
+  # Pull requests from anyone — an amendment PR is how the contract changes.
+  gh api "repos/$REPO/pulls?state=open&per_page=50" \
+    --jq '.[] | "amendment: PR #\(.number) by \(.user.login) — \(.title)"' \
+    2>/dev/null | while read -r line; do
+      grep -qxF "$line" "$SEEN_RUNS" 2>/dev/null || { echo "$line"; echo "$line" >> "$SEEN_RUNS"; }
+    done
+
+  # Failed workflow runs, each reported once.
+  gh run list --repo "$REPO" --limit 15 \
+    --json databaseId,conclusion,event,url \
+    --jq '.[] | select(.conclusion=="failure") | "\(.databaseId)|ritual FAILED (\(.event)) — \(.url)"' \
+    2>/dev/null | while IFS='|' read -r id msg; do
+      grep -qxF "run:$id" "$SEEN_RUNS" 2>/dev/null || { echo "$msg"; echo "run:$id" >> "$SEEN_RUNS"; }
+    done
+
+  # Milestone clock — only speaks when due within a day or overdue.
+  if command -v node >/dev/null 2>&1; then
+    local clk; clk="$(node "$ROOT/protocol/clock.mjs" 2>/dev/null)" || true
+    case "$clk" in
+      *OVERDUE*)    echo "clock: $(printf '%s' "$clk" | grep -m1 OVERDUE | sed 's/^ *//')" ;;
+      *"DUE TODAY"*) echo "clock: $(printf '%s' "$clk" | grep -m1 'DUE TODAY' | sed 's/^ *//')" ;;
+    esac
+  fi
+
+  SINCE="$now"
+  printf '%s' "$now" > "$STATE" 2>/dev/null || true
+}
+
+if [ "$ONCE" -eq 1 ]; then sweep; exit 0; fi
+while true; do sweep; sleep "$INTERVAL"; done

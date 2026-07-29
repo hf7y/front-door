@@ -27,7 +27,38 @@ done
 
 delivered=0
 
-if command -v hermes >/dev/null 2>&1; then
+# 1. KDE Connect — straight to the paired phone. No cloud, no account, no cost.
+#    Set FRONT_DOOR_SMS_TO=+15551234567 to send a real SMS instead of a
+#    notification. Unset, it pushes a phone notification, which is free.
+if command -v kdeconnect-cli >/dev/null 2>&1; then
+  DEV="${FRONT_DOOR_KDE_DEVICE:-}"
+  if [ -z "$DEV" ]; then
+    DEV="$(kdeconnect-cli --list-devices 2>/dev/null \
+      | grep 'paired and reachable' \
+      | sed -n 's/.*: \([0-9a-f]\{8,\}\).*/\1/p' | head -1)"
+  fi
+  if [ -n "$DEV" ]; then
+    if [ -n "${FRONT_DOOR_SMS_TO:-}" ]; then
+      if kdeconnect-cli -d "$DEV" --send-sms "$SUBJECT: $BODY" \
+           --destination "$FRONT_DOOR_SMS_TO" 2>/dev/null; then
+        echo "ping: delivered as SMS to $FRONT_DOOR_SMS_TO via $DEV" >&2
+        delivered=1
+      else
+        echo "ping: kdeconnect SMS failed (phone reachable?)" >&2
+      fi
+    fi
+    if [ "$delivered" -eq 0 ]; then
+      if kdeconnect-cli -d "$DEV" --ping-msg "$SUBJECT: $BODY" 2>/dev/null; then
+        echo "ping: delivered as phone notification via $DEV" >&2
+        delivered=1
+      fi
+    fi
+  else
+    echo "ping: no paired-and-reachable kdeconnect device" >&2
+  fi
+fi
+
+if [ "$delivered" -eq 0 ] && command -v hermes >/dev/null 2>&1; then
   # Discover a target if none was given: first configured channel.
   # Guard against parsing hermes' "nothing configured" prose as a target name.
   if [ -z "$TARGET" ]; then

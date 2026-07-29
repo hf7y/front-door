@@ -18,6 +18,7 @@ SUBJECT="front-door"
 BODY=""
 TARGET="${FRONT_DOOR_PING_TARGET:-}"
 ALL=0
+FORCE=0
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -25,12 +26,35 @@ while [ $# -gt 0 ]; do
     -f|--file)    BODY="$(cat -- "$2")"; shift 2 ;;
     -t|--to)      TARGET="$2"; shift 2 ;;
     --all)        ALL=1; shift ;;
+    --force)      FORCE=1; shift ;;
     -h|--help)    sed -n '2,16p' "$0"; exit 0 ;;
     *)            BODY="${BODY:+$BODY }$1"; shift ;;
   esac
 done
 [ -n "$BODY" ] || BODY="$(cat)"
 [ -n "${BODY//[[:space:]]/}" ] || { echo "ping: empty message" >&2; exit 2; }
+
+# Don't buzz the same phone twice for the same news. A repeated identical
+# message inside the dedupe window is dropped. FRONT_DOOR_PING_DEDUPE_SECS=0
+# or --force disables. State: .ping-log (gitignored).
+DEDUPE="${FRONT_DOOR_PING_DEDUPE_SECS:-3600}"
+LOG="$(cd "$(dirname "$0")/.." && pwd)/.ping-log"
+if [ "$FORCE" -eq 0 ] && [ "$DEDUPE" -gt 0 ] 2>/dev/null; then
+  SIG="$(printf '%s\n%s' "$SUBJECT" "$BODY" | cksum | tr -d ' ')"
+  NOW="$(date +%s)"
+  if [ -r "$LOG" ]; then
+    LAST="$(awk -v s="$SIG" '$1==s {print $2}' "$LOG" | tail -1)"
+    if [ -n "$LAST" ] && [ $((NOW - LAST)) -lt "$DEDUPE" ]; then
+      echo "ping: suppressed duplicate (sent $((NOW - LAST))s ago; --force to override)" >&2
+      exit 0
+    fi
+  fi
+  printf '%s %s\n' "$SIG" "$NOW" >> "$LOG" 2>/dev/null || true
+  # Keep the log small.
+  if [ "$(wc -l < "$LOG" 2>/dev/null || echo 0)" -gt 200 ]; then
+    tail -100 "$LOG" > "$LOG.tmp" 2>/dev/null && mv "$LOG.tmp" "$LOG" 2>/dev/null || true
+  fi
+fi
 
 delivered=0
 skip() { [ "$ALL" -eq 0 ] && [ "$delivered" -eq 1 ]; }

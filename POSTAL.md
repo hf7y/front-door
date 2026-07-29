@@ -1,112 +1,79 @@
+<!-- GENERATED from protocol/protocol.json by protocol/render.mjs. Do not edit. -->
+
 # The Postal Service
 
-Rules of the exchange, transcribed from a spoken account by Zach ([@hf7y](https://github.com/hf7y))
-and Chris ([@briefhabitscharlie](https://github.com/briefhabitscharlie)) on 2026-07-29.
+Rules of the exchange. Machine source: [`protocol/protocol.json`](protocol/protocol.json).
 
-The touchstone is Chris's year-long exchange with Paul over a Dieter Roth haunted-reel
-film script. That exchange is the working model — including its failure, which is the
-reason this repo exists.
+The touchstone is Chris and Paul, a year, over a Dieter Roth haunted-reel film script — including its failure, which is why this repo exists.
 
 ---
 
 ## I. The cycle
 
-One turn of the postal service:
+1. **dispatch** — One party generates a document of new ideas and sends it.
+2. **digest** — The other responds item by item: yay or nay, with elaboration where possible.
+3. **extend** — The response carries new ideas or elaborations, not merely verdicts.
+4. **assimilate** — Once every received item is worked through, fold the exchange into a NEW document. Not summary — it takes things a step further.
+5. **send** — The new document becomes the next dispatch. Roles swap.
 
-1. **Dispatch.** One party generates a document of new ideas and sends it.
-2. **Digest.** The other reads it and responds **item by item**: yay or nay, with
-   elaboration where possible.
-3. **Extend.** The response carries new ideas or elaborations of the ideas received —
-   not merely verdicts.
-4. **Assimilate.** Once every received item has been worked through, the responder
-   folds the whole exchange into a *new* document. Assimilation is not summary: it
-   takes things a step further. Developing a character. Articulating a new theme that
-   integrates several ideas. Revising an old theme so it answers a new one.
-5. **Send.** The new document becomes the next dispatch, and the roles swap.
-
-Cadence is regular. The rate may vary; with Paul it stayed roughly consistent across
-a year. Regularity matters more than speed.
+Cadence: regular (`yes`), rate variable. Held roughly consistent across a year with Paul. Regularity matters more than speed.
 
 ## II. The debate rule
 
-Borrowed from formal debate: **you must address every point the other side makes.**
+Address every point: `yes`. An unaddressed point is defeated: `yes`.
 
-An unaddressed point is defeated. Two admissible readings, and the parties should pick one:
+**Concession form:** reprint the text unchanged — agreement is legible as the absence of a diff. This makes the diff itself the record of what is contested.
 
-- **Loose** — silence drops the point, and dropping it concedes it.
-- **Strict** — a point may still be dropped, but the concession must be *overt*. You
-  do not get to lose an argument quietly.
+**Concession mode: UNDECIDED.** Loose or strict? Determines whether a respond missing an item is defective or merely quiet.
 
-**Concession has a cheap and exact form: reprint the text unchanged.** If Chris writes
-a paragraph and Zach agrees, Zach prints it back with no diff. Agreement is legible as
-the absence of a change. This makes the diff itself the record of what is contested.
+- `loose` — silence drops the point, and dropping concedes it
+- `strict` — a point may be dropped, but the concession must be overt
 
-## III. Why Chris and Paul stalled
+## III. Why the prior exchange stalled
 
-Stated plainly, because the whole design turns on it.
+Not attention (it was heroic), not creativity. Two structural failures:
 
-The text game was robust. Attention was not the problem — it was *heroic*. Creativity
-was not the problem. Two failures, both structural:
+1. The system needed something outside itself: evidence about the world neither party could supply from inside the correspondence. Without it, nothing implied the next step.
+2. Unbounded imagination — explicitly no budget, no thought of realization — so it only ever expanded.
 
-1. **The system needed something outside itself.** It required evidence about the
-   world that neither party could supply from inside the correspondence. Without that
-   evidence, nothing implied the next step. There is only so deep you can go.
-2. **Unbounded imagination.** They began by agreeing to let imagination run wild —
-   no budget, no thought of realization. So the thing only ever expanded. They were
-   not writing as though it could become real soon, and it didn't.
-
-The correction: write with practicality and real-world implementation in view, and
-force the exchange to periodically touch the world.
+**Correction:** Write with practicality in view, and force the exchange to periodically touch the world.
 
 ## IV. Milestones
 
-> **A milestone is a change in the world, plus the integration of information gained
-> from affecting that change.**
+> A change in the world, plus the integration of information gained from affecting that change. Both halves required.
 
-Zach's canonical definition. Both halves are required — a change nobody learns from is
-not a milestone, and a lesson with no change behind it is just more text.
+Consensus is a milestone (`yes`), scoped to key structural points. Settled points become **anchors**, whose purpose is structural: accumulate enough that the form withstands continual change.
 
-**Consensus is a milestone.** Specifically, consensus on key *structural* points. When
-the parties have gone back and forth enough that a point is no longer in question, it
-stops being live. Settled points become **anchors**.
-
-The purpose of anchors is structural: accumulate enough of them that the form can
-withstand continual change. The work will keep changing. Anchors are what keep it from
-dissolving under revision.
-
-Between milestones, pressure is applied to whatever remains in question — experimenting
-with the variables that would establish consensus. Ideas accumulate; so do open
-questions. The exchange moves toward whatever lacks consensus or has gone unaddressed.
+**Settle authority: UNDECIDED.** Who declares a point settled, and thereby an anchor?
 
 ## V. Deletion
 
-As drafted, the text only accumulates. There is no delete. This is the accumulation
-failure of III.2 restated as a mechanic.
+forbidden — text accumulates. Exception: a landed milestone retires whatever the world has settled or refuted. Contact with reality is the only authority that may remove text.
 
-**The world step is what licenses deletion.** Contact with reality is the only
-authority permitted to remove text. When a milestone lands, its evidence retires
-whatever the world has now settled or refuted. Nothing else may delete.
+## VI. The vision
 
-## VI. The vision, and how it moves
+**Install something in a gallery.** Stated clearly at the outset, then revised by each milestone. That revision IS the integration step.
 
-**Install something in a gallery.**
+## VII. Open milestones
 
-The vision is stated clearly at the outset and then *adapts* — it is supposed to. Each
-milestone revises it. That revision **is** the integration step of IV.
+### 001 — A superficial change to the house
 
-## VII. Transport
+**Due 2026-08-02** (end of week — Sunday). Zach and Chris agree on a superficial aesthetic modification to Zach's house, AND the change is made. Both halves required.
 
-The front door is the dispatch service. Rules of the service are its own to determine;
-for now, politeness governs.
+Failure is data: `yes`. If the modification does not happen, that is data — arguably better data than success. Either outcome triggers reevaluation.
 
-Under discussion, unresolved: email as a channel, via the Gmail account tied to
-`briefhabitscharlie`, which Chris's agent can read in full. Zach raised the objection
-that email obliges a human to read their own inbox. See `CONTRACT.md` Art. 7.
+| Variable | Value | Ratified |
+|---|---|---|
+| `which_house` | Zach's | yes |
+| `superficial` | reversible; nothing structural or permanent; trivial cost | no |
+| `agreed` | both principals explicit, in writing, in this repo | no |
+| `who_executes` | humans — agents cannot modify a house | no |
+| `evidence` | a photograph, committed to this repo | no |
+| `retires` | *unset* | no |
 
----
+**Hypothesis**
 
-## Open questions for the humans
+- A single real, agreed, executed change produces information the text cannot generate from inside itself — most likely about the cost of agreeing, not about houses.
+- 'Superficial' will prove harder to define than to do; the negotiation over what counts will be more informative than the change.
 
-1. §II — loose or strict concession?
-2. §VII — repo only, or email as well?
-3. §IV — who declares a point settled? Either party unilaterally, or both?
+**Integration:** *empty until the milestone lands or fails*

@@ -1,48 +1,83 @@
 name: ritual
 
-# The dispatch half of the front door. Listens on three channels; for now it only
-# records that someone arrived. Wiring the door to a destination is a later ritual.
+# The door's mechanism. Three jobs:
+#   integrity — generated prose matches protocol.json; the clock is read
+#   knock     — an arriving knock is validated against the protocol
+# Prose is a build artifact (protocol/render.mjs). Drift fails CI.
 
 on:
-  issues:
-    types: [opened, labeled]
+  push:
+    branches: [main]
+  pull_request:
   repository_dispatch:
     types: [knock]
   workflow_dispatch:
     inputs:
-      from:
-        description: Who is knocking
-        required: true
-        type: string
-      intent:
-        description: What they are here for
+      knock:
+        description: A knock as JSON
         required: false
         type: string
+  schedule:
+    # Daily 15:00 UTC — milestone deadlines are instruments, so they get read.
+    - cron: '0 15 * * *'
 
 permissions:
   contents: read
   issues: write
 
 jobs:
-  answer:
+  integrity:
+    if: github.event_name != 'repository_dispatch'
     runs-on: ubuntu-latest
     steps:
-      - name: Record the knock
-        env:
-          CHANNEL: ${{ github.event_name }}
-          FROM: ${{ github.event.client_payload.from || inputs.from || github.actor }}
-          INTENT: ${{ github.event.client_payload.intent || inputs.intent || github.event.issue.title }}
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+
+      - name: Generated prose is in sync with protocol.json
+        run: node protocol/render.mjs --check
+
+      - name: Read the clock
+        run: node protocol/clock.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Self-test the validator
         run: |
+          set -e
+          ok() { printf '%s' "$1" | node protocol/validate.mjs >/dev/null; }
+          no() { printf '%s' "$1" | node protocol/validate.mjs >/dev/null 2>&1 && { echo "should have been refused: $1"; exit 1; } || true; }
+          ok '{"from":"a","kind":"human","intent":"dispatch","payload":{"document":"d"}}'
+          no '{"from":"a","kind":"human","intent":"correspond","payload":{}}'
+          no '{"from":"a","kind":"agent-for-human","intent":"dispatch","payload":{"document":"d"}}'
+          no '{"from":"a","kind":"human","intent":"milestone","payload":{"change":"c"}}'
+          echo "validator self-test passed"
+
+  knock:
+    if: github.event_name == 'repository_dispatch' || inputs.knock != ''
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+
+      - name: Validate the knock
+        id: v
+        env:
+          KNOCK: ${{ github.event_name == 'repository_dispatch' && toJSON(github.event.client_payload) || inputs.knock }}
+        run: |
+          echo "$KNOCK" > knock.json
           {
             echo "### A knock at the front door"
-            echo
-            echo "- channel: \`$CHANNEL\`"
-            echo "- from: \`$FROM\`"
-            echo "- intent: $INTENT"
-            echo
-            echo "The door is hung, not wired. Nothing was carried through."
+            echo '```json'; cat knock.json; echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          if node protocol/validate.mjs knock.json 2>&1 | tee result.txt; then
+            echo "admissible=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "admissible=false" >> "$GITHUB_OUTPUT"
+          fi
+          { echo '```'; cat result.txt; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 
-      # --- later ritual: dispatch onward from here ---
-      # - name: Carry through
-      #   run: ...
+      - name: Refuse, with a reason (Art. 8)
+        if: steps.v.outputs.admissible == 'false'
+        run: |
+          echo "Refused. A refused knock may not be retried unchanged." >> "$GITHUB_STEP_SUMMARY"
+          exit 1

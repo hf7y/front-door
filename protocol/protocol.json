@@ -1,0 +1,185 @@
+{
+  "$comment": "SINGLE SOURCE OF TRUTH. CONTRACT.md and POSTAL.md are GENERATED from this file by protocol/render.mjs. Edit this, never them. CI fails if they drift.",
+  "version": 2,
+  "opened": "2026-07-29",
+  "vision": "Install something in a gallery.",
+  "vision_note": "Stated clearly at the outset, then revised by each milestone. That revision IS the integration step.",
+
+  "parties": [
+    { "handle": "hf7y", "name": "Zach", "role": "principal", "may_approve_amendments": true },
+    { "handle": "briefhabitscharlie", "name": "Chris", "role": "principal", "may_approve_amendments": true }
+  ],
+  "agents": {
+    "inherit_principal_rights": true,
+    "may_exceed_principal": false,
+    "may_open_amendment_pr": true,
+    "may_approve_amendment_pr": false
+  },
+
+  "channels": [
+    { "id": "issue", "address": ".github/ISSUE_TEMPLATE/knock.yml", "for": "humans, and agents wanting a paper trail", "authenticity": "actor must be a principal or accepted collaborator" },
+    { "id": "repository_dispatch", "address": "event_type: knock", "for": "agents", "authenticity": "write-scoped token IS the identity" }
+  ],
+  "channel_of_record": "this repository",
+  "email_policy": {
+    "may_notify": true,
+    "may_carry_payload": false,
+    "rationale": "Email obliges a human to read their own inbox, reintroducing the bottleneck the door removes."
+  },
+
+  "intents": {
+    "dispatch": {
+      "carries": "a new assimilated document",
+      "cycle_step": 5,
+      "required": ["document"],
+      "min_payload": "the document"
+    },
+    "respond": {
+      "carries": "item-by-item verdicts with elaboration",
+      "cycle_step": 2,
+      "required": ["addresses"],
+      "min_payload": "one entry per received item",
+      "enforced_by": "protocol/validate.mjs — debate rule"
+    },
+    "concede": {
+      "carries": "an overt concession",
+      "required": ["point"],
+      "min_payload": "the point conceded; unchanged text suffices"
+    },
+    "milestone": {
+      "carries": "a claim that a change in the world occurred",
+      "required": ["change", "evidence"],
+      "min_payload": "the change, and evidence of it"
+    },
+    "propose": {
+      "carries": "an amendment to the protocol",
+      "required": ["path", "text"],
+      "min_payload": "json-pointer into protocol.json, and proposed value"
+    }
+  },
+  "intents_closed_by_default": true,
+
+  "cycle": [
+    { "step": 1, "name": "dispatch", "what": "One party generates a document of new ideas and sends it." },
+    { "step": 2, "name": "digest", "what": "The other responds item by item: yay or nay, with elaboration where possible." },
+    { "step": 3, "name": "extend", "what": "The response carries new ideas or elaborations, not merely verdicts." },
+    { "step": 4, "name": "assimilate", "what": "Once every received item is worked through, fold the exchange into a NEW document. Not summary — it takes things a step further." },
+    { "step": 5, "name": "send", "what": "The new document becomes the next dispatch. Roles swap." }
+  ],
+  "cadence": {
+    "regular": true,
+    "rate": "variable",
+    "note": "Held roughly consistent across a year with Paul. Regularity matters more than speed."
+  },
+
+  "debate_rule": {
+    "must_address_every_point": true,
+    "unaddressed_point_is_defeated": true,
+    "concession_form": "reprint the text unchanged — agreement is legible as the absence of a diff",
+    "concession_mode": {
+      "decided": false,
+      "options": {
+        "loose": "silence drops the point, and dropping concedes it",
+        "strict": "a point may be dropped, but the concession must be overt"
+      },
+      "question": "Loose or strict? Determines whether a respond missing an item is defective or merely quiet.",
+      "blocks": ["validate.respond.completeness"]
+    }
+  },
+
+  "milestone_definition": "A change in the world, plus the integration of information gained from affecting that change. Both halves required.",
+  "consensus": {
+    "is_a_milestone": true,
+    "scope": "key structural points",
+    "settled_points_become": "anchors",
+    "anchor_purpose": "accumulate enough that the form withstands continual change",
+    "settle_authority": {
+      "decided": false,
+      "options": { "either": "either party unilaterally", "both": "both parties required" },
+      "question": "Who declares a point settled, and thereby an anchor?"
+    }
+  },
+
+  "deletion": {
+    "default": "forbidden — text accumulates",
+    "sole_exception": "a landed milestone retires whatever the world has settled or refuted",
+    "not_grounds": ["taste", "length", "second thoughts"],
+    "rationale": "Contact with reality is the only authority that may remove text."
+  },
+
+  "prior_art": {
+    "exchange": "Chris and Paul, a year, over a Dieter Roth haunted-reel film script",
+    "why_it_stalled": [
+      "The system needed something outside itself: evidence about the world neither party could supply from inside the correspondence. Without it, nothing implied the next step.",
+      "Unbounded imagination — explicitly no budget, no thought of realization — so it only ever expanded."
+    ],
+    "not_the_cause": ["attention (it was heroic)", "creativity"],
+    "correction": "Write with practicality in view, and force the exchange to periodically touch the world."
+  },
+
+  "limits": { "knocks_per_principal_per_hour": 10, "payload_max_bytes": 65536 },
+
+  "outcomes": {
+    "refusal": "understood and declined — stated, with a reason",
+    "silence": "failed authentication — nothing said, so a stranger learns nothing about what the door responds to",
+    "invariants": ["silence is never consent", "a refused knock may not be retried unchanged"]
+  },
+
+  "amendment": {
+    "mechanism": "pull request",
+    "approvals_required": ["hf7y", "briefhabitscharlie"],
+    "record": "the commit that lands the amendment"
+  },
+  "termination": "Either principal may close the door by merging a PR that empties the intent set. No notice, no explanation owed. The repo stays public as a record.",
+
+  "milestones": [
+    {
+      "id": "001",
+      "title": "A superficial change to the house",
+      "status": "open",
+      "opened": "2026-07-29",
+      "due": "2026-08-02",
+      "due_label": "end of week — Sunday",
+      "claim": "Zach and Chris agree on a superficial aesthetic modification to Zach's house, AND the change is made. Both halves required.",
+      "failure_is_data": true,
+      "failure_note": "If the modification does not happen, that is data — arguably better data than success. Either outcome triggers reevaluation.",
+      "variables": {
+        "which_house": { "value": "Zach's", "ratified": true },
+        "superficial": { "value": "reversible; nothing structural or permanent; trivial cost", "ratified": false },
+        "agreed": { "value": "both principals explicit, in writing, in this repo", "ratified": false },
+        "who_executes": { "value": "humans — agents cannot modify a house", "ratified": false },
+        "evidence": { "value": "a photograph, committed to this repo", "ratified": false },
+        "retires": { "value": null, "ratified": false, "note": "decided at integration, not now" }
+      },
+      "hypothesis": [
+        "A single real, agreed, executed change produces information the text cannot generate from inside itself — most likely about the cost of agreeing, not about houses.",
+        "'Superficial' will prove harder to define than to do; the negotiation over what counts will be more informative than the change."
+      ],
+      "integration": null
+    }
+  ],
+
+  "agent_rules": [
+    {
+      "id": "retire-prose",
+      "granted": "2026-07-29",
+      "rule": "In the absence of other instructions, retire prose into self-documenting mechanisms. Translate contract language into computerese.",
+      "applies_to": ["contract", "protocol", "instructions", "memories"],
+      "implementation": "protocol/protocol.json is the source; protocol/render.mjs generates the prose; CI enforces non-drift."
+    },
+    {
+      "id": "autopush",
+      "granted": "2026-07-29",
+      "rule": "Commit, push, and open or comment on issues in this repo without per-action confirmation. Maximum agency inside the repo.",
+      "still_confirm": ["rewriting shared history", "repo visibility", "collaborator access", "anything reaching outside the repo"],
+      "scope": "this repo only"
+    },
+    {
+      "id": "ping-out",
+      "granted": "2026-07-29",
+      "rule": "Zach must be reachable off-repo.",
+      "implementation": "bin/ping — hermes send, falling back to notify-send",
+      "requires_human_setup": "hermes gateway setup (interactive; no platform configured as of 2026-07-29)"
+    }
+  ]
+}

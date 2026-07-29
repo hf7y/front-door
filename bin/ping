@@ -47,6 +47,17 @@ if ! skip && command -v hermes >/dev/null 2>&1; then
            | head -1)" ;;
     esac
   fi
+  # --list only reports channels the gateway has *discovered*. A freshly paired
+  # platform is configured and sendable but not yet listed, so fall back to the
+  # platform's home channel for anything marked enabled in hermes' env.
+  if [ -z "$TARGET" ] && [ -r "$HOME/.hermes/.env" ]; then
+    for plat in whatsapp signal telegram discord slack; do
+      up="$(printf '%s' "$plat" | tr '[:lower:]' '[:upper:]')"
+      if grep -qE "^${up}_ENABLED=(true|1|yes)$" "$HOME/.hermes/.env" 2>/dev/null; then
+        TARGET="$plat"; break
+      fi
+    done
+  fi
   if [ -n "$TARGET" ]; then
     if printf '%s' "$BODY" | hermes send --to "$TARGET" --subject "$SUBJECT" --quiet 2>/dev/null; then
       echo "ping: delivered via hermes ($TARGET)" >&2

@@ -1,0 +1,19 @@
+[Unit]
+Description=front-door watcher — relays GitHub events to WhatsApp
+Documentation=https://github.com/hf7y/front-door
+# The relay needs the WhatsApp bridge; start after it, but do not hard-require
+# it — KDE Connect and desktop notification still work if hermes is down.
+After=hermes-gateway.service
+Wants=hermes-gateway.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/Documents/Projects/front-door
+ExecStart=%h/Documents/Projects/front-door/bin/watch --notify -i 120
+Restart=always
+RestartSec=30
+# gh needs a browsable PATH; nvm's node is not in the default user PATH.
+Environment=PATH=%h/.nvm/versions/node/v25.2.1/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+
+[Install]
+WantedBy=default.target

@@ -109,3 +109,26 @@ No crontab entries. Nothing in `~/.local/bin`. No `~/.claude` hooks. No system-w
       laptop, and it can only comment on the repo.
 - [ ] **Milestone 001 is due 2026-08-02** and no modification to the house has been
       proposed by either principal. PR #3 has zero ratifications.
+
+## Cloud doorkeeper (2026-07-29)
+
+`trig_01Jqm3wbMwfw2maKKo93U688` — "front-door doorkeeper", claude-sonnet-5, cron
+`0 1,14 * * *` (9am + 8pm America/Chicago), env `env_011bc4BhKriaHMdkzCbf5usR`.
+Manage at https://claude.ai/code/routines/trig_01Jqm3wbMwfw2maKKo93U688 — routines
+cannot be deleted via API; disable with an `update` setting `enabled: false`.
+
+Created after `/web-setup` connected the GitHub account (the earlier attempt failed
+HTTP 401 for exactly that reason). **This is the only thing that can answer a knock
+unattended** — front-door is not in the scheduler registry, has no cron, and no
+agent-running unit, so before this nothing would ever compose a reply. That mattered
+because ratified concession mode is `strict`: an unaddressed point is defective and
+silence never concedes, so an unanswered dispatch accrues an obligation instead of
+lapsing.
+
+**Authority it holds, and the fence around it:** it may open an amendment PR and may
+never approve one (Art. 9). Its prompt carries the never-write-the-ratification-token
+rule as its stated most important constraint, because it acts with `@hf7y`'s
+credentials and `protocol/ratify.mjs` cannot distinguish it from Zach. That guard is
+prose, not mechanism — the separate bot identity in the backlog is what would make it
+real. Turning this on traded "nothing can answer a knock" for "an unattended agent
+holds credentials that could forge a ratification if it ignored a written rule."

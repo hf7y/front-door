@@ -1,74 +1,180 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>front-door</title>
+<!-- GENERATED from protocol/protocol.json by protocol/render.mjs. Do not edit. -->
+<title>front-door — your move</title>
 <style>
-  :root {
-    --bg: #f6f3ee; --ink: #1b1a18; --dim: #6f6a63; --line: #d8d2c8; --accent: #8a5a2b;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root { --bg: #141311; --ink: #ece7de; --dim: #928c83; --line: #2f2c28; --accent: #d09a5e; }
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0; padding: 12vh 1.5rem 6rem; background: var(--bg); color: var(--ink);
-    font: 16px/1.65 ui-serif, Georgia, serif; display: flex; justify-content: center;
-  }
-  main { width: 100%; max-width: 34rem; }
-  h1 { font-size: 1.5rem; font-weight: 500; letter-spacing: .02em; margin: 0 0 .25rem; }
-  .sub { color: var(--dim); font-size: .9rem; margin: 0 0 2.5rem; font-style: italic; }
-  .door {
-    border: 1px solid var(--line); border-bottom-width: 0; height: 9rem;
-    border-radius: 4rem 4rem 0 0; margin: 0 auto 2.5rem; max-width: 12rem;
-    display: flex; align-items: flex-end; justify-content: center; padding-bottom: 1.6rem;
-  }
-  .door span { width: .4rem; height: .4rem; border-radius: 50%; background: var(--accent); }
-  h2 { font-size: .78rem; text-transform: uppercase; letter-spacing: .14em;
-       color: var(--dim); font-weight: 600; margin: 2.5rem 0 .75rem; }
-  ul { padding-left: 1.1rem; margin: 0; }
-  li { margin-bottom: .4rem; }
-  a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
-  .who { display: flex; gap: 2rem; flex-wrap: wrap; }
-  .who div { font-size: .95rem; }
-  .who b { display: block; font-size: .72rem; text-transform: uppercase;
-           letter-spacing: .12em; color: var(--dim); font-weight: 600; }
-  footer { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--line);
-           color: var(--dim); font-size: .82rem; }
-  code { font: .85em ui-monospace, SFMono-Regular, Menlo, monospace;
-         background: color-mix(in srgb, var(--ink) 8%, transparent);
-         padding: .1em .35em; border-radius: 3px; }
+  :root{--bg:#f6f3ee;--ink:#1b1a18;--dim:#6f6a63;--line:#d8d2c8;--accent:#8a5a2b;--act:#b3441f;--ok:#3f6b45;--card:#fffdf9}
+  @media (prefers-color-scheme:dark){:root{--bg:#141311;--ink:#ece7de;--dim:#928c83;--line:#2f2c28;--accent:#d09a5e;--act:#e0704a;--ok:#7fae86;--card:#1c1a17}}
+  :root[data-theme=dark]{--bg:#141311;--ink:#ece7de;--dim:#928c83;--line:#2f2c28;--accent:#d09a5e;--act:#e0704a;--ok:#7fae86;--card:#1c1a17}
+  :root[data-theme=light]{--bg:#f6f3ee;--ink:#1b1a18;--dim:#6f6a63;--line:#d8d2c8;--accent:#8a5a2b;--act:#b3441f;--ok:#3f6b45;--card:#fffdf9}
+  *{box-sizing:border-box}
+  body{margin:0;padding:4rem 1.25rem 6rem;background:var(--bg);color:var(--ink);
+    font:17px/1.6 ui-serif,Georgia,serif;display:flex;justify-content:center}
+  main{width:100%;max-width:40rem}
+  .door{border:1px solid var(--line);border-bottom-width:0;height:5rem;border-radius:2.5rem 2.5rem 0 0;
+    margin:0 auto 1.5rem;max-width:7rem;display:flex;align-items:flex-end;justify-content:center;padding-bottom:1rem}
+  .door span{width:.35rem;height:.35rem;border-radius:50%;background:var(--accent)}
+  h1{font-size:1.35rem;font-weight:500;margin:0 0 .2rem;text-align:center}
+  .sub{color:var(--dim);font-size:.85rem;font-style:italic;margin:0 0 2.5rem;text-align:center}
+  h2{font-size:.72rem;text-transform:uppercase;letter-spacing:.14em;color:var(--dim);
+    font-weight:600;margin:2.5rem 0 .9rem}
+  .card{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--act);
+    border-radius:3px;padding:1.1rem 1.25rem;margin-bottom:.9rem}
+  .card.done{border-left-color:var(--ok)}
+  .card.wait{border-left-color:var(--dim)}
+  .card h3{margin:0 0 .4rem;font-size:1.02rem;font-weight:600}
+  .card p{margin:0 0 .5rem}
+  .card p:last-child{margin-bottom:0}
+  .how{background:color-mix(in srgb,var(--ink) 5%,transparent);border-radius:3px;
+    padding:.6rem .8rem;font-size:.92rem;margin-top:.6rem}
+  .who{font-size:.75rem;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);font-weight:600}
+  a{color:var(--accent);text-underline-offset:2px}
+  .btn{display:inline-block;margin-top:.5rem;padding:.45rem .9rem;border:1px solid var(--accent);
+    border-radius:3px;text-decoration:none;font-size:.92rem}
+  .clock{text-align:center;font-size:.9rem;color:var(--dim);margin-bottom:2rem}
+  .clock b{color:var(--act);font-size:1.5rem;display:block;font-weight:600}
+  code{font:.85em ui-monospace,Menlo,monospace;background:color-mix(in srgb,var(--ink) 8%,transparent);
+    padding:.1em .35em;border-radius:3px}
+  footer{margin-top:3rem;padding-top:1rem;border-top:1px solid var(--line);color:var(--dim);font-size:.78rem}
+  .live{font-size:.72rem;color:var(--dim);text-align:center;margin-top:.5rem}
 </style>
-</head>
-<body>
+
 <main>
   <div class="door"><span></span></div>
-
   <h1>front-door</h1>
-  <p class="sub">Hung, not yet wired.</p>
+  <p class="sub">What needs doing, and who has to do it.</p>
 
-  <p>A shared threshold — one public place where a collaborator, human or agent,
-  can arrive and be let through.</p>
+  <div class="clock" id="clock"><b>—</b>until milestone 001 is due (2026-08-02, end of week — Sunday)</div>
 
-  <h2>Who is inside</h2>
-  <div class="who">
-    <div><b>Founder</b><a href="https://github.com/hf7y">hf7y</a></div>
-    <div><b>Collaborator</b><a href="https://github.com/briefhabitscharlie">briefhabitscharlie</a></div>
+  <h2>Your move</h2>
+  <div id="todo"><div class="card wait"><p>Reading the door…</p></div></div>
+
+  <h2>The milestone</h2>
+  <div class="card wait">
+    <h3>001 — A superficial change to the house</h3>
+    <p>Zach and Chris agree on a superficial aesthetic modification to Zach's house, AND the change is made. Both halves required.</p>
+    <p class="how"><strong>A miss is data.</strong> If it does not happen, that outcome is still information — it is not a failure to be smoothed over.</p>
   </div>
 
-  <h2>How to knock</h2>
-  <ul>
-    <li>Open a <a href="https://github.com/hf7y/front-door/issues/new/choose">Knock</a> issue, or</li>
-    <li>send a <code>repository_dispatch</code> of type <code>knock</code></li>
-  </ul>
-  <p>Either wakes the <code>ritual</code> workflow, which records the arrival.
-  Nothing is carried through yet — that mechanism is a later ritual.</p>
-
   <footer>
-    <a href="https://github.com/hf7y/front-door">source</a> ·
-    the door stands; the hallway comes next
+    <a href="https://github.com/hf7y/front-door">repo</a> ·
+    <a href="https://github.com/hf7y/front-door/blob/main/CONTRACT.md">contract</a> ·
+    <a href="https://github.com/hf7y/front-door/blob/main/POSTAL.md">postal service</a>
+    <div class="live" id="stamp">generated from protocol.json — live state loads on open</div>
   </footer>
 </main>
-</body>
-</html>
+
+<script>
+const F = {"repo":"hf7y/front-door","principals":[{"handle":"hf7y","name":"Zach"},{"handle":"briefhabitscharlie","name":"Chris"}],"required":["hf7y","briefhabitscharlie"],"milestone":{"id":"001","title":"A superficial change to the house","due":"2026-08-02","dueLabel":"end of week — Sunday","claim":"Zach and Chris agree on a superficial aesthetic modification to Zach's house, AND the change is made. Both halves required.","status":"open","failureIsData":true,"unratified":["superficial","agreed","who_executes","evidence","retires"],"agreed":"both principals explicit, in writing, in this repo","superficial":"reversible; nothing structural or permanent; trivial cost"},"openQuestions":[{"at":"debate_rule.concession_mode","question":"Loose or strict? Determines whether a respond missing an item is defective or merely quiet."},{"at":"consensus.settle_authority","question":"Who declares a point settled, and thereby an anchor?"},{"at":"milestone[001].superficial","question":"Ratify: reversible; nothing structural or permanent; trivial cost"},{"at":"milestone[001].agreed","question":"Ratify: both principals explicit, in writing, in this repo"},{"at":"milestone[001].who_executes","question":"Ratify: humans — agents cannot modify a house"},{"at":"milestone[001].evidence","question":"Ratify: a photograph, committed to this repo"},{"at":"milestone[001].retires","question":"Ratify: unset"}]};
+const API = 'https://api.github.com/repos/' + F.repo;
+const esc = s => String(s??'').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Mirrors protocol/ratify.mjs: terse line, token as a whole word, no negation,
+// quoted email text ignored. Kept in sync deliberately — see ratify.test.mjs.
+function saysApprove(body){
+  const out=[];
+  for(const raw of String(body||'').split(/\r?\n/)){
+    const l=raw.trim();
+    if(/^>/.test(l)||/^On .*wrote:$/i.test(l)||/^-{2,}\s*$/.test(l)) break;
+    if(/^(sent from|get outlook)/i.test(l)||/reply to this email directly/i.test(l)) break;
+    if(l) out.push(l);
+    if(out.length>=3) break;
+  }
+  return out.some(l => l.length<=80 && /\bAPPROVE(D)?\b/i.test(l) && !/\b(not|don'?t|do not|no longer|un)\s*approve/i.test(l));
+}
+
+function days(due){
+  const d=Math.round((Date.parse(due+'T23:59:59Z')-Date.now())/86400000);
+  return d;
+}
+
+function card(cls, who, title, body, link, linkText){
+  return '<div class="card '+cls+'">'
+    + '<div class="who">'+esc(who)+'</div>'
+    + '<h3>'+esc(title)+'</h3>'
+    + body
+    + (link ? '<a class="btn" href="'+link+'">'+esc(linkText||'open')+'</a>' : '')
+    + '</div>';
+}
+
+async function j(u){ const r=await fetch(u,{headers:{accept:'application/vnd.github+json'}}); if(!r.ok) throw new Error(r.status+' '+r.statusText); return r.json(); }
+
+async function load(){
+  const clock=document.getElementById('clock');
+  const d=days(F.milestone.due);
+  clock.innerHTML='<b>'+(d<0?Math.abs(d)+' days overdue':d===0?'due today':d+' days')+'</b>'
+    +'until milestone '+esc(F.milestone.id)+' is due ('+esc(F.milestone.due)+', '+esc(F.milestone.dueLabel)+')';
+
+  const todo=document.getElementById('todo');
+  const items=[];
+
+  try{
+    const [prs, issues] = await Promise.all([ j(API+'/pulls?state=open'), j(API+'/issues?state=open') ]);
+
+    // 1. The thing with a deadline: has a house modification been proposed?
+    const proposals = issues.filter(i => !i.pull_request && /modification|propose|house/i.test(i.title||''));
+    if(!proposals.length){
+      items.push(card('', 'both principals', 'Propose a change to the house — nothing has been proposed yet',
+        '<p>Milestone '+esc(F.milestone.id)+' needs <strong>agreement and execution</strong>, and agreement means: '
+        + esc(F.milestone.agreed) + '</p>'
+        + '<div class="how"><strong>What counts as superficial:</strong> '+esc(F.milestone.superficial)+'</div>',
+        'https://github.com/'+F.repo+'/issues/new?title=' + encodeURIComponent('propose: house modification for milestone 001'),
+        'Propose one'));
+    }
+
+    // 2. Amendment PRs awaiting ratification.
+    for(const pr of prs){
+      const [reviews, comments] = await Promise.all([
+        j(API+'/pulls/'+pr.number+'/reviews'), j(API+'/issues/'+pr.number+'/comments')
+      ]);
+      const yes=new Set();
+      reviews.forEach(r => { if(r.state==='APPROVED' && F.required.includes(r.user?.login)) yes.add(r.user.login); });
+      comments.forEach(c => { if(F.required.includes(c.user?.login) && saysApprove(c.body)) yes.add(c.user.login); });
+      const pending=F.required.filter(h => !yes.has(h));
+      if(pending.length){
+        items.push(card(yes.size?'':'', pending.join(' and ')+' — still needed',
+          'Ratify PR #'+pr.number+' — '+pr.title,
+          '<p>'+(yes.size? 'Ratified so far: <strong>'+esc([...yes].join(', '))+'</strong>. ' : 'No ratifications yet. ')
+          + 'It merges only when <strong>both</strong> principals have said yes (Art. 9).</p>'
+          + '<div class="how"><strong>How:</strong> reply <code>APPROVE</code> to a notification email <em>from this pull request</em>, '
+          + 'or approve it in GitHub. A reply on any other thread does not count — it must be on the PR itself.</div>',
+          pr.html_url, 'Open PR #'+pr.number));
+      } else {
+        items.push(card('done','nobody','PR #'+pr.number+' is fully ratified',
+          '<p>Both principals ratified. It should merge automatically.</p>', pr.html_url, 'Open PR #'+pr.number));
+      }
+    }
+
+    // 3. A principal's approval token sitting on the wrong thread.
+    const stray=[];
+    for(const iss of issues.filter(i => !i.pull_request)){
+      const cs=await j(API+'/issues/'+iss.number+'/comments');
+      cs.forEach(c => { if(F.required.includes(c.user?.login) && saysApprove(c.body)) stray.push({n:iss.number,who:c.user.login,url:c.html_url}); });
+    }
+    for(const s of stray){
+      items.push(card('', s.who, 'An approval on issue #'+s.n+' was not counted',
+        '<p>A comment from <strong>'+esc(s.who)+'</strong> on issue #'+s.n+' reads as approval, but ratification only counts '
+        + 'on a pull request. Nothing was recorded.</p>'
+        + '<div class="how">If it was meant to ratify an amendment, say it again on the PR itself.</div>',
+        s.url, 'See the comment'));
+    }
+
+    // 4. Undecided protocol questions.
+    if(F.openQuestions.length){
+      items.push(card('wait','both principals', F.openQuestions.length+' protocol question(s) still undecided',
+        '<ul>'+F.openQuestions.map(q => '<li><code>'+esc(q.at)+'</code> — '+esc(q.question)+'</li>').join('')+'</ul>',
+        'https://github.com/'+F.repo+'/blob/main/CONTRACT.md','Read the contract'));
+    }
+
+    todo.innerHTML = items.length ? items.join('') :
+      card('done','nobody','Nothing is waiting on you','<p>No unratified amendments, no undecided rules, and a modification has been proposed.</p>');
+    document.getElementById('stamp').textContent='live state read from GitHub at '+new Date().toLocaleString();
+  }catch(e){
+    // Never imply calm when the door could not be read.
+    todo.innerHTML = card('', 'this page', 'Could not read the door',
+      '<p>GitHub would not answer: <code>'+esc(e.message)+'</code>. This is <strong>not</strong> "nothing to do" — '
+      + 'the page could not check. Open the repo directly.</p>',
+      'https://github.com/'+F.repo,'Open the repo');
+    document.getElementById('stamp').textContent='live read FAILED — the list above is not authoritative';
+  }
+}
+load();
+</script>

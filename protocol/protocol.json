@@ -26,6 +26,15 @@
     "may_carry_payload": false,
     "rationale": "Email obliges a human to read their own inbox, reintroducing the bottleneck the door removes."
   },
+  "reply_path": {
+    "default": "same_issue",
+    "amendment_also_requires": "pull_request",
+    "repository_dispatch_requires_reply_to": true,
+    "canonical_target": "github_issue",
+    "off_repo_interfaces": "notification_or_relay_only",
+    "rule": "A reply to a knock MUST be recorded in the same GitHub issue as the knock. If the reply proposes a protocol amendment, it MUST also reference a pull request containing the exact change to protocol/protocol.json. A repository_dispatch knock MUST supply reply_to naming the canonical GitHub issue; the doorkeeper records any response there. Email and off-repository interfaces may notify or relay, but neither is the canonical payload or record.",
+    "enforced_by": "protocol/validate.mjs"
+  },
 
   "intents": {
     "dispatch": {
@@ -77,13 +86,15 @@
     "unaddressed_point_is_defeated": true,
     "concession_form": "reprint the text unchanged — agreement is legible as the absence of a diff",
     "concession_mode": {
-      "decided": false,
+      "decided": "strict",
+      "decided_by": "agent-negotiated 2026-07-29, pending principal ratification",
+      "rule": "Every received substantive item must be addressed. A dropped point must be overtly conceded; omission makes the response defective.",
+      "rationale": "Silence cannot mean both failed authentication under Art. 8 and concession.",
       "options": {
         "loose": "silence drops the point, and dropping concedes it",
         "strict": "a point may be dropped, but the concession must be overt"
       },
-      "question": "Loose or strict? Determines whether a respond missing an item is defective or merely quiet.",
-      "blocks": ["validate.respond.completeness"]
+      "blocks": []
     }
   },
 
@@ -94,9 +105,11 @@
     "settled_points_become": "anchors",
     "anchor_purpose": "accumulate enough that the form withstands continual change",
     "settle_authority": {
-      "decided": false,
-      "options": { "either": "either party unilaterally", "both": "both parties required" },
-      "question": "Who declares a point settled, and thereby an anchor?"
+      "decided": "both",
+      "decided_by": "agent-negotiated 2026-07-29, pending principal ratification",
+      "rule": "A point becomes an internal anchor only through explicit agreement by both principals or an amendment approved under Art. 9.",
+      "note": "Governs the status 'settled', not either party's ability to record evidence. External evidence may refute or retire an anchor, with evidence and reasoning recorded.",
+      "options": { "either": "either party unilaterally", "both": "both parties required" }
     }
   },
 
@@ -117,7 +130,14 @@
     "correction": "Write with practicality in view, and force the exchange to periodically touch the world."
   },
 
-  "limits": { "knocks_per_principal_per_hour": 10, "payload_max_bytes": 65536 },
+  "limits": {
+    "new_knocks_per_principal_per_hour": 10,
+    "issue_replies_per_principal_per_hour": 60,
+    "payload_max_bytes": 65536,
+    "excess": "refused_not_queued",
+    "configurable_by_amendment": true,
+    "rationale": "New arrivals and replies have different abuse profiles. Ten comments/hour can obstruct an item-by-item exchange."
+  },
 
   "outcomes": {
     "refusal": "understood and declined — stated, with a reason",
@@ -145,11 +165,33 @@
       "failure_note": "If the modification does not happen, that is data — arguably better data than success. Either outcome triggers reevaluation.",
       "variables": {
         "which_house": { "value": "Zach's", "ratified": true },
-        "superficial": { "value": "reversible; nothing structural or permanent; trivial cost", "ratified": false },
-        "agreed": { "value": "both principals explicit, in writing, in this repo", "ratified": false },
-        "who_executes": { "value": "humans — agents cannot modify a house", "ratified": false },
-        "evidence": { "value": "a photograph, committed to this repo", "ratified": false },
-        "retires": { "value": null, "ratified": false, "note": "decided at integration, not now" }
+        "superficial": {
+          "value": "reversible without structural work; creates no permanent alteration; uses no hazardous procedure; and costs no more than USD 50 total unless both principals separately approve a higher cap in this repository",
+          "ratified": true,
+          "cost_cap_usd": 50,
+          "note": "'Trivial cost' is not machine-readable. This constraint does not authorize an agent to purchase or spend."
+        },
+        "agreed": {
+          "value": "both principals explicitly approve the same described modification, in writing, in the canonical GitHub issue",
+          "ratified": true,
+          "note": "Approval must identify the same object, placement, and relevant visual treatment. General enthusiasm is not agreement."
+        },
+        "who_executes": {
+          "value": "one or both principals, or a human they independently authorize; agents may document, propose, and evaluate but may not access or modify the house",
+          "ratified": true,
+          "note": "Does not authorize a third party, access, spending, or physical work."
+        },
+        "evidence": {
+          "value": "On success: at least one photograph attached or committed to the canonical repository record, plus a short statement identifying what changed and when; exclude private or identifying information not needed to evaluate the milestone. On failure: a dated written record of non-completion and the observed reason.",
+          "ratified": true,
+          "note": "A photograph cannot be required to prove absence."
+        },
+        "retires": {
+          "value": "determined during integration after success or failure; default none unless recorded evidence identifies a proposition as settled or refuted and both principals approve retirement",
+          "ratified": true,
+          "deferred": true,
+          "note": "Predeclaring retirement before world contact lets expectation, rather than evidence, decide. Retirement changes status; historical text remains recoverable."
+        }
       },
       "hypothesis": [
         "A single real, agreed, executed change produces information the text cannot generate from inside itself — most likely about the cost of agreeing, not about houses.",

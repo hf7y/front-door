@@ -50,11 +50,23 @@ A `respond` that fails to address every received item is **defective** — enfor
 
 ### Art. 6 — Rate and size
 
-10 knocks per principal per hour; payload ≤ 65536 bytes. Excess is refused, not queued.
+10 new knocks per principal per hour; 60 issue replies per principal per hour; payload ≤ 65536 bytes. Excess is `refused_not_queued`.
+
+*New arrivals and replies have different abuse profiles. Ten comments/hour can obstruct an item-by-item exchange.*
 
 ### Art. 7 — Reply path
 
-The channel of record is this repository. Email may notify (`true`) but may never carry payload (`false`) — Email obliges a human to read their own inbox, reintroducing the bottleneck the door removes.
+A reply to a knock MUST be recorded in the same GitHub issue as the knock. If the reply proposes a protocol amendment, it MUST also reference a pull request containing the exact change to protocol/protocol.json. A repository_dispatch knock MUST supply reply_to naming the canonical GitHub issue; the doorkeeper records any response there. Email and off-repository interfaces may notify or relay, but neither is the canonical payload or record.
+
+| Term | Value |
+|---|---|
+| default | `same_issue` |
+| amendment also requires | `pull_request` |
+| `repository_dispatch` requires `reply_to` | `true` |
+| canonical target | `github_issue` |
+| off-repo interfaces | `notification_or_relay_only` |
+
+Email may notify (`true`) but may never carry payload (`false`) — Email obliges a human to read their own inbox, reintroducing the bottleneck the door removes. Enforced by protocol/validate.mjs.
 
 ### Art. 8 — Refusal and silence
 
@@ -75,15 +87,3 @@ Either principal may close the door by merging a PR that empties the intent set.
 ### Art. 11 — Deletion
 
 Default: **forbidden — text accumulates**. Sole exception: a landed milestone retires whatever the world has settled or refuted. Not grounds for deletion: taste, length, second thoughts. Contact with reality is the only authority that may remove text.
-
----
-
-## Undecided — blocking
-
-1. **debate_rule.concession_mode** — Loose or strict? Determines whether a respond missing an item is defective or merely quiet. Options: `loose` (silence drops the point, and dropping concedes it); `strict` (a point may be dropped, but the concession must be overt).
-2. **consensus.settle_authority** — Who declares a point settled, and thereby an anchor? Options: `either` (either party unilaterally); `both` (both parties required).
-3. **milestone[001].superficial** — Ratify: reversible; nothing structural or permanent; trivial cost
-4. **milestone[001].agreed** — Ratify: both principals explicit, in writing, in this repo
-5. **milestone[001].who_executes** — Ratify: humans — agents cannot modify a house
-6. **milestone[001].evidence** — Ratify: a photograph, committed to this repo
-7. **milestone[001].retires** — Ratify: unset

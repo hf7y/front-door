@@ -52,6 +52,15 @@ jobs:
           no '{"from":"a","kind":"human","intent":"correspond","payload":{}}'
           no '{"from":"a","kind":"agent-for-human","intent":"dispatch","payload":{"document":"d"}}'
           no '{"from":"a","kind":"human","intent":"milestone","payload":{"change":"c"}}'
+          # Art. 7 — repository_dispatch must name its canonical issue.
+          no '{"from":"a","kind":"agent","channel":"repository_dispatch","intent":"dispatch","payload":{"document":"d"}}'
+          ok '{"from":"a","kind":"agent","channel":"repository_dispatch","reply_to":"#2","intent":"dispatch","payload":{"document":"d"}}'
+          # Art. 7 — an amendment must reference a PR.
+          no '{"from":"a","kind":"human","intent":"propose","payload":{"path":"/limits","text":"x"}}'
+          ok '{"from":"a","kind":"human","intent":"propose","payload":{"path":"/limits","text":"x","pull_request":"#3"}}'
+          # POSTAL §II strict — an unaddressed item is defective, not quiet.
+          no '{"from":"a","kind":"human","intent":"respond","payload":{"received_items":3,"addresses":[{"item":"a","verdict":"yay"}]}}'
+          ok '{"from":"a","kind":"human","intent":"respond","payload":{"received_items":1,"addresses":[{"item":"a","verdict":"concede"}]}}'
           echo "validator self-test passed"
 
   knock:
@@ -67,7 +76,11 @@ jobs:
         env:
           KNOCK: ${{ github.event_name == 'repository_dispatch' && toJSON(github.event.client_payload) || inputs.knock }}
         run: |
-          echo "$KNOCK" > knock.json
+          # Tag the knock with the channel it actually arrived on, so Art. 7's
+          # reply_to requirement applies on the real path and not just in tests.
+          # A caller cannot spoof this by declaring its own channel.
+          CH='${{ github.event_name == 'repository_dispatch' && 'repository_dispatch' || 'issue' }}'
+          echo "$KNOCK" | jq --arg ch "$CH" '. + {channel: $ch}' > knock.json
           {
             echo "### A knock at the front door"
             echo '```json'; cat knock.json; echo '```'

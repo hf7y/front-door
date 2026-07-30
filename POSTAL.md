@@ -24,7 +24,9 @@ Address every point: `yes`. An unaddressed point is defeated: `yes`.
 
 **Concession form:** reprint the text unchanged — agreement is legible as the absence of a diff. This makes the diff itself the record of what is contested.
 
-**Concession mode: UNDECIDED.** Loose or strict? Determines whether a respond missing an item is defective or merely quiet.
+**Concession mode: SETTLED — `strict`.** Every received substantive item must be addressed. A dropped point must be overtly conceded; omission makes the response defective.
+
+*Silence cannot mean both failed authentication under Art. 8 and concession.*
 
 - `loose` — silence drops the point, and dropping concedes it
 - `strict` — a point may be dropped, but the concession must be overt
@@ -44,7 +46,10 @@ Not attention (it was heroic), not creativity. Two structural failures:
 
 Consensus is a milestone (`yes`), scoped to key structural points. Settled points become **anchors**, whose purpose is structural: accumulate enough that the form withstands continual change.
 
-**Settle authority: UNDECIDED.** Who declares a point settled, and thereby an anchor?
+**Settle authority: SETTLED — `both`.** A point becomes an internal anchor only through explicit agreement by both principals or an amendment approved under Art. 9.
+
+
+*Governs the status 'settled', not either party's ability to record evidence. External evidence may refute or retire an anchor, with evidence and reasoning recorded.*
 
 ## V. Deletion
 
@@ -65,11 +70,11 @@ Failure is data: `yes`. If the modification does not happen, that is data — ar
 | Variable | Value | Ratified |
 |---|---|---|
 | `which_house` | Zach's | yes |
-| `superficial` | reversible; nothing structural or permanent; trivial cost | no |
-| `agreed` | both principals explicit, in writing, in this repo | no |
-| `who_executes` | humans — agents cannot modify a house | no |
-| `evidence` | a photograph, committed to this repo | no |
-| `retires` | *unset* | no |
+| `superficial` | reversible without structural work; creates no permanent alteration; uses no hazardous procedure; and costs no more than USD 50 total unless both principals separately approve a higher cap in this repository | yes |
+| `agreed` | both principals explicitly approve the same described modification, in writing, in the canonical GitHub issue | yes |
+| `who_executes` | one or both principals, or a human they independently authorize; agents may document, propose, and evaluate but may not access or modify the house | yes |
+| `evidence` | On success: at least one photograph attached or committed to the canonical repository record, plus a short statement identifying what changed and when; exclude private or identifying information not needed to evaluate the milestone. On failure: a dated written record of non-completion and the observed reason. | yes |
+| `retires` | determined during integration after success or failure; default none unless recorded evidence identifies a proposition as settled or refuted and both principals approve retirement | yes |
 
 **Hypothesis**
 

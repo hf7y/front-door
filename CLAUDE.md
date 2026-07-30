@@ -56,6 +56,36 @@ This is a known weakness of the mechanism, not a feature. The proper fix is a se
 bot identity so the logins differ; until then this rule is the only thing standing
 between an agent and forged ratification.
 
+## Changing anything outside this repo
+
+This machine runs an estate-management project, **senechal**, and the standing ecosystem
+rule is: *the project that generates a piece of machine config owns it; senechal owns
+knowing it exists.*
+
+So if you add or change anything the machine as a whole sees — a systemd unit, a crontab
+entry, something in `~/.local/bin`, a `~/.claude` hook, a marker file — then:
+
+```
+notify-senechal '<what changed, where, who owns it>'
+```
+
+Do it without being asked. Also record it in [`.scheduler/FOCUS.md`](.scheduler/FOCUS.md)
+under the shared-host footprint, with **teardown steps**, and retire entries there when
+you remove the thing rather than leaving them live.
+
+Two hard-won details:
+
+- **`notify-senechal` takes no flags.** Its argument is the note. Running it with
+  `--help` files a backlog entry that literally says `--help` — this happened on
+  2026-07-29 and had to be cleaned up.
+- Before writing into another project's repo, run `check-project-busy <project>`, and use
+  `focus-commit` rather than bare `git add`/`commit`/`push` for `FOCUS.md` — those files
+  have multiple writers and the bare sequence has silently lost content before.
+
+Prefer not to edit another project's config at all. front-door edited `~/.hermes/.env`
+to fix a broken JID; senechal's own rules would have shipped that as a remedy script for
+a human to run instead. If you must, back the file up and declare it.
+
 ## Invariants
 
 - Intents are **closed by default**. An intent absent from `protocol.json` is refused.

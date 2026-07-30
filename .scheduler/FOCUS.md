@@ -1,5 +1,46 @@
 # front-door — focus & backlog
 
+## 2026-07-29 — session record (project stood up end to end)
+
+Repo created, contract negotiated with the collaborator's agent, prose retired into
+mechanisms, and an off-repo notification path built. Shas on `main`:
+
+| sha | what |
+|---|---|
+| `a24117b` | hang the front door — page, knock form, dispatch stub |
+| `72a0923` | draft the doorkeeper's contract |
+| `b80a58a` | transcribe the postal service; open milestone 001 |
+| `dfa5a4e` | **retire prose into mechanisms** — `protocol.json` is the source, prose generated |
+| `2cdba1e` | **fix: knock validation was always admitted** (`validate \| tee` masked the exit status) |
+| `cb83086` | `bin/watch` — the door watches itself |
+| `bf730b2` | ratify by email reply — Art. 9 with no browser or terminal |
+| `e436c6d` | ping via KDE Connect |
+| `e6da16c` | ping: prefer hermes (WhatsApp) over KDE Connect |
+| `dfd93be` | ping: discover freshly paired platforms |
+| `b6f9940` | ping: suppress duplicate alerts |
+| `61adad3` | relay GitHub events to WhatsApp |
+| `23c9e98` | declare shared-host footprint; carry the senechal protocol |
+
+Open on a branch, not merged: `e6740dd` on `amendment/draft-2-ratification` → **PR #3**,
+agent-negotiated and pending ratification by both principals under Art. 9.
+
+**Philosophy delta (ecosystem): none.** No doctrine file was edited — `UNIVERSE.md`,
+`BUILD-DISCIPLINE.md`, `PRECIPITATION.md`, `STABILITY-MILESTONES.md`, `PLAYBOOK.md`,
+`FOCUS-FORMAT.md` all untouched. This project did adopt a *project-level* rule from Zach
+— *"in the absence of other instructions, retire prose into self-documenting mechanisms"*
+— recorded in `CLAUDE.md` and `protocol.json#/agent_rules`, not in ecosystem doctrine.
+
+**Cross-project writes:** senechal `2afb82f` (accidental — a `notify-senechal --help`
+probe filed a backlog entry reading literally `--help`; the tool takes no flags) and
+senechal `829be49` (the real footprint filing, which also removed that junk line).
+Both via `notify-senechal`/`focus-commit`, path-scoped to `.scheduler/FOCUS.md`.
+
+**Not written, deliberately:** realisateur's `.scheduler/FOCUS.md`. `closeout-lint` check
+B wants a dated session record with a sha there, but that file's bootstrap stamp and its
+Law 3 say the opposite — *"the next agent to append session residue here has broken it."*
+The file's own doctrine wins over a generic lint. Contradiction filed for Zach in
+scheduler's `BLOCKERS.md` under `## realisateur` rather than resolved unilaterally.
+
 ## Shared-host footprint (declared per realisateur build discipline)
 
 Everything this project installs outside its own repo. Filed with senechal

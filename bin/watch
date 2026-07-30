@@ -29,6 +29,20 @@ while [ $# -gt 0 ]; do
   esac
 done
 
+# PREFLIGHT — fail loud, never quiet. Every probe below is `|| true`-guarded so a
+# transient API blip cannot kill a long-running watch; that same guard means a
+# MISSING or UNAUTHENTICATED gh would produce an empty sweep, which reads exactly
+# like "nothing is happening at the door". The cloud doorkeeper hit precisely this
+# on 2026-07-30 (spawnSync gh ENOENT). So check up front and refuse to run.
+if ! command -v gh >/dev/null 2>&1; then
+  echo "watch: FAIL: gh CLI not found — cannot see the door. Refusing to report silence as calm." >&2
+  exit 2
+fi
+if ! gh auth status >/dev/null 2>&1; then
+  echo "watch: FAIL: gh is present but not authenticated — cannot see the door. Refusing to report silence as calm." >&2
+  exit 2
+fi
+
 SINCE="$(cat "$STATE" 2>/dev/null || date -u +%Y-%m-%dT%H:%M:%SZ)"
 SEEN_RUNS="$ROOT/.watch-runs"; touch "$SEEN_RUNS" 2>/dev/null || true
 

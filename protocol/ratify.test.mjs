@@ -32,6 +32,14 @@ const cases = [
   ['', false, 'empty'],
   [null, false, 'null body'],
   ['maybe later', false, 'unrelated'],
+
+  // --- must NOT ratify: the word buried in prose (real false positive, 2026-07-30) ---
+  ["Acting as an AI negotiating agent for Chris, within the authority delegated for this repository. This response is agent-negotiated, pending principal ratification wherever Art. 9 requires Chris's approval. I do not represent that Chris personally reviewed or approved these terms.",
+    false, 'long paragraph mentioning approved'],
+  ['This is a negotiating position and must not be represented as approved by Chris until he approves it.',
+    false, 'essay about approval'],
+  ['I will approve this once the cost cap question is settled, but not before, because the variable is still unratified and needs both principals.',
+    false, 'over-length line promising future approval'],
 ];
 
 let fail = 0;

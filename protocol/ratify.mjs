@@ -24,7 +24,40 @@ const LIB_ONLY = process.env.RATIFY_LIB === '1';
 const pr = process.argv[2];
 if (!LIB_ONLY && !/^\d+$/.test(pr ?? '')) { console.error('usage: ratify.mjs <pr-number>'); process.exit(2); }
 
-const gh = (path) => JSON.parse(execFileSync('gh', ['api', path, '--paginate'], { encoding: 'utf8' }));
+// The gh CLI is absent in some environments (notably the cloud doorkeeper, which
+// reported `spawnSync gh ENOENT` on 2026-07-30). Fall back to the REST API over
+// fetch, and if neither route is available FAIL LOUD — a tally that silently
+// returns "nobody ratified" is indistinguishable from a real zero.
+function repoSlug() {
+  if (process.env.GITHUB_REPOSITORY) return process.env.GITHUB_REPOSITORY;
+  try {
+    const url = execFileSync('git', ['remote', 'get-url', 'origin'], { encoding: 'utf8' }).trim();
+    const m = url.match(/[:/]([^/:]+\/[^/]+?)(?:\.git)?$/);
+    if (m) return m[1];
+  } catch {}
+  throw new Error('cannot determine owner/repo: set GITHUB_REPOSITORY or add an origin remote');
+}
+
+let ghBroken = null;
+async function api(path) {
+  if (ghBroken === null) {
+    try { execFileSync('gh', ['--version'], { stdio: 'ignore' }); ghBroken = false; }
+    catch { ghBroken = true; }
+  }
+  if (!ghBroken) {
+    return JSON.parse(execFileSync('gh', ['api', path, '--paginate'], { encoding: 'utf8' }));
+  }
+  const token = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
+  if (!token) {
+    throw new Error('gh CLI unavailable and no GH_TOKEN/GITHUB_TOKEN set — cannot read ratifications. Refusing to report a tally that would look like zero.');
+  }
+  const url = 'https://api.github.com/' + path.replace('{owner}/{repo}', repoSlug());
+  const r = await fetch(url, {
+    headers: { authorization: `Bearer ${token}`, accept: 'application/vnd.github+json', 'user-agent': 'front-door-ratify' },
+  });
+  if (!r.ok) throw new Error(`GitHub API ${r.status} ${r.statusText} for ${url}`);
+  return r.json();
+}
 
 // An email reply carries the original message quoted beneath it. Keep only the
 // text the human actually typed, so a quoted "APPROVE" can never ratify.
@@ -43,11 +76,19 @@ export function firstMeaningfulLines(body) {
   return out;
 }
 
+// A ratification is a SHORT deliberate line — "APPROVE", "Approve, looks right".
+// It is not a word buried in an essay: Chris's negotiating comment opens with
+// "...reviewed or approved these terms", which a mere substring test read as a
+// ratification on 2026-07-30. So cap the line length. An email reply that means
+// yes is terse; prose that merely discusses approval is not.
+const MAX_RATIFY_LINE = 80;
+
 export function saysApprove(body) {
   const lines = firstMeaningfulLines(body);
-  // Require APPROVE as a standalone word in the first meaningful lines, and
-  // reject an explicit negation on the same line.
-  return lines.some((l) => /\bAPPROVE(D)?\b/i.test(l) && !/\b(not|don'?t|do not|no longer|un)\s+approve/i.test(l));
+  return lines.some((l) =>
+    l.length <= MAX_RATIFY_LINE &&
+    /\bAPPROVE(D)?\b/i.test(l) &&
+    !/\b(not|don'?t|do not|no longer|un)\s*approve/i.test(l));
 }
 
 const isPrincipal = (login) => REQUIRED.includes(login);
@@ -55,14 +96,30 @@ const ratified = new Map();
 
 if (LIB_ONLY) { /* parsers exported above; no network, no output */ } else {
 
-for (const r of gh(`repos/{owner}/{repo}/pulls/${pr}/reviews?per_page=100`)) {
+for (const r of await api(`repos/{owner}/{repo}/pulls/${pr}/reviews?per_page=100`)) {
   if (r.state === 'APPROVED' && isPrincipal(r.user?.login)) {
     ratified.set(r.user.login, { via: 'review', at: r.submitted_at, url: r.html_url });
   }
 }
-for (const c of gh(`repos/{owner}/{repo}/issues/${pr}/comments?per_page=100`)) {
+for (const c of await api(`repos/{owner}/{repo}/issues/${pr}/comments?per_page=100`)) {
   if (isPrincipal(c.user?.login) && saysApprove(c.body) && !ratified.has(c.user.login)) {
     ratified.set(c.user.login, { via: 'comment', at: c.created_at, url: c.html_url });
+  }
+}
+
+// A principal's approval token on a NON-PR thread is a signal, not noise: it
+// happened for real on 2026-07-30 (a reply-by-email landed on issue #2 instead
+// of PR #3 and sat unrecorded). Surface it; never count it.
+const misrouted = [];
+for (const c of await api(`repos/{owner}/{repo}/issues/comments?per_page=100`)) {
+  const onThisPr = String(c.issue_url ?? '').endsWith(`/${pr}`);
+  if (!onThisPr && isPrincipal(c.user?.login) && saysApprove(c.body)) {
+    misrouted.push({
+      who: c.user.login,
+      thread: String(c.issue_url ?? '').split('/').pop(),
+      at: c.created_at,
+      url: c.html_url,
+    });
   }
 }
 
@@ -73,5 +130,11 @@ console.log(JSON.stringify({
   ratified: Object.fromEntries(ratified),
   pending,
   complete: pending.length === 0,
+  misrouted_approvals: misrouted,
 }, null, 2));
+if (misrouted.length) {
+  console.error(`\nNOTE: ${misrouted.length} approval token(s) from a principal on a thread other than PR ${pr}:`);
+  for (const m of misrouted) console.error(`  - ${m.who} on issue #${m.thread} (${m.at}) ${m.url}`);
+  console.error('These do NOT count toward Art. 9 and were not counted. If ratification was intended, it must be given on the PR itself.');
+}
 }

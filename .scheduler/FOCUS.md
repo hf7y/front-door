@@ -21,8 +21,7 @@ mechanisms, and an off-repo notification path built. Shas on `main`:
 | `61adad3` | relay GitHub events to WhatsApp |
 | `23c9e98` | declare shared-host footprint; carry the senechal protocol |
 
-Open on a branch, not merged: `e6740dd` on `amendment/draft-2-ratification` → **PR #3**,
-agent-negotiated and pending ratification by both principals under Art. 9.
+PR #3 was merged as `ec91dc1`, ratifying draft 2. The contract-negotiation thread (#2) is closed as completed.
 
 **Philosophy delta (ecosystem): none.** No doctrine file was edited — `UNIVERSE.md`,
 `BUILD-DISCIPLINE.md`, `PRECIPITATION.md`, `STABILITY-MILESTONES.md`, `PLAYBOOK.md`,
@@ -40,6 +39,15 @@ B wants a dated session record with a sha there, but that file's bootstrap stamp
 Law 3 say the opposite — *"the next agent to append session residue here has broken it."*
 The file's own doctrine wins over a generic lint. Contradiction filed for Zach in
 scheduler's `BLOCKERS.md` under `## realisateur` rather than resolved unilaterally.
+
+
+## 2026-08-01 — current state
+
+- PR #3 merged; draft 2 is the current protocol.
+- Issue #2 closed as completed.
+- Issue #4 is the canonical Milestone 001 execution thread. Chris approved the revised
+  proposal; Zach's matching approval is pending.
+- Issue #5 tracks the remaining mechanization work and does not block the house change.
 
 ## Shared-host footprint (declared per realisateur build discipline)
 
@@ -96,19 +104,18 @@ No crontab entries. Nothing in `~/.local/bin`. No `~/.claude` hooks. No system-w
 
 ## Backlog
 
-- [ ] **Separate bot identity.** Agents act as `@hf7y`, so `protocol/ratify.mjs` cannot
-      distinguish a principal from an agent using that principal's credentials. Only a
-      prose rule in `CLAUDE.md` prevents forged ratification. A GitHub App or machine
-      user would make it mechanical.
-- [ ] **Rate limits are declared, not metered.** Art. 6 states 10 new knocks and 60 issue
-      replies per principal per hour; nothing counts.
-- [ ] **`payload.pull_request` is referenced, not verified.** The dependency-free
-      validator cannot confirm the PR exists or contains the claimed change.
+- [ ] **Mechanize remaining trust boundaries — tracked in #5.** Sequence: separate bot
+      identity first, then meter Art. 6 rate limits, then verify that a proposed
+      `payload.pull_request` exists and changes `protocol/protocol.json`. Acceptance
+      criteria and the non-blocking relationship to Milestone 001 are recorded in #5.
 - [ ] **Every local transport dies with the machine.** WhatsApp, KDE Connect, and desktop
       notification all need mandark awake. Only GitHub Actions survives a sleeping
       laptop, and it can only comment on the repo.
-- [ ] **Milestone 001 is due 2026-08-02** and no modification to the house has been
-      proposed by either principal. PR #3 has zero ratifications.
+- [ ] **Milestone 001 is due 2026-08-02.** Issue #4 proposes replacing the Deepwater
+      Horizon images with Chris's existing prints. Chris has approved revised terms:
+      the prints must first be located; Chris will assist with installation; existing
+      frames will be reused where possible; and frame heights may be adjusted if needed.
+      Zach's approval of the same revised object, placement, and visual treatment is pending.
 
 ## Cloud doorkeeper (2026-07-29)
 

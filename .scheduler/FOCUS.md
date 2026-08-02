@@ -41,6 +41,27 @@ The file's own doctrine wins over a generic lint. Contradiction filed for Zach i
 scheduler's `BLOCKERS.md` under `## realisateur` rather than resolved unilaterally.
 
 
+## 2026-08-02 — doorkeeper sweep (due date)
+
+- Milestone 001 is due **today**. Still `status: "open"` in `protocol.json` — not overdue
+  yet, so no "missed" PR opened. Issue #4's `agreed` condition is still missing Zach's own
+  written approval of Chris's amended terms; the doorkeeper flagged this in #4 and declined
+  to supply it (a real commitment about Zach's house, not a protocol call an agent can make
+  by proxy) — Zach notified off-repo.
+- Two knocks from Chris had zero replies — both answered item-by-item this run (POSTAL §II,
+  strict mode):
+  - **#6** ("mount the ViewSonic monitor," filed `intent: milestone`) — refused on
+    admissibility (`node protocol/validate.mjs` — missing `payload.change`/`payload.evidence`;
+    it's a proposal, not a claim of a change that already happened). Substance not rejected,
+    just the intent it was filed under; pointed at `dispatch`/`propose` instead.
+  - **#5** (mechanize trust boundaries) — three items + sequencing, all `yay`. Item 1
+    (separate agent identity) needs a human-provisioned GitHub App/machine user before an
+    agent can implement the check; items 2 (rate limiting) and 3 (PR-reference verification)
+    are dependency-free and implementable now. Each to land as its own Art. 9 PR, not bundled.
+- `bin/watch` doesn't run in this cloud environment (`gh` CLI absent here; it lives on
+  mandark's systemd unit instead) — used the GitHub MCP tools directly this run.
+- `node protocol/render.mjs --check` clean, no prose drift.
+
 ## 2026-08-01 — current state
 
 - PR #3 merged; draft 2 is the current protocol.

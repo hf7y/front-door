@@ -156,7 +156,7 @@
     {
       "id": "001",
       "title": "A superficial change to the house",
-      "status": "open",
+      "status": "missed",
       "opened": "2026-07-29",
       "due": "2026-08-02",
       "due_label": "end of week — Sunday",
@@ -197,7 +197,7 @@
         "A single real, agreed, executed change produces information the text cannot generate from inside itself — most likely about the cost of agreeing, not about houses.",
         "'Superficial' will prove harder to define than to do; the negotiation over what counts will be more informative than the change."
       ],
-      "integration": null
+      "integration": "Missed on schedule (due 2026-08-02, recorded 2026-08-03). What happened: Chris proposed exact terms in issue #4 on 2026-08-01 (17:04 UTC), approved them minutes later (17:06), then posted an amended approval nine minutes after that (17:16) — locate Chris's existing prints first, reuse frames where they fit, allow collaborative height adjustment, Chris to assist with install. That amended text is the last substantive word on the object/placement/treatment. Zach never posted approval of any version, amended or original, in issue #4. The doorkeeper flagged the missing approval on 2026-08-02 (01:13 UTC), same day as the deadline, naming it explicitly as a decision only Zach could make and declining to supply it by proxy. No reply followed. Consequently 'agreed' (both principals' explicit written approval of the same terms) was never satisfied, so execution and photographic evidence never became applicable — the miss is at the agreement gate, not the execution gate. What this implies for the next milestone: the correspondence's asymmetry is now data rather than a working assumption — Chris (via agent) iterated proposal terms twice within twelve minutes; Zach did not engage with the specific proposal in the canonical issue at all during the entire milestone window. This matches the prior_art hypothesis that a real, agreed, executed change would produce information about 'the cost of agreeing' rather than about houses: here, the cost that showed up was a principal's silence in the canonical channel, which under the ratified concession_mode (strict) does not count as consent and does not retire the proposal — it remains live, unconceded, on the table in issue #4 for whatever milestone follows."
     }
   ],
 

@@ -60,25 +60,3 @@ forbidden — text accumulates. Exception: a landed milestone retires whatever t
 **Install something in a gallery.** Stated clearly at the outset, then revised by each milestone. That revision IS the integration step.
 
 ## VII. Open milestones
-
-### 001 — A superficial change to the house
-
-**Due 2026-08-02** (end of week — Sunday). Zach and Chris agree on a superficial aesthetic modification to Zach's house, AND the change is made. Both halves required.
-
-Failure is data: `yes`. If the modification does not happen, that is data — arguably better data than success. Either outcome triggers reevaluation.
-
-| Variable | Value | Ratified |
-|---|---|---|
-| `which_house` | Zach's | yes |
-| `superficial` | reversible without structural work; creates no permanent alteration; uses no hazardous procedure; and costs no more than USD 50 total unless both principals separately approve a higher cap in this repository | yes |
-| `agreed` | both principals explicitly approve the same described modification, in writing, in the canonical GitHub issue | yes |
-| `who_executes` | one or both principals, or a human they independently authorize; agents may document, propose, and evaluate but may not access or modify the house | yes |
-| `evidence` | On success: at least one photograph attached or committed to the canonical repository record, plus a short statement identifying what changed and when; exclude private or identifying information not needed to evaluate the milestone. On failure: a dated written record of non-completion and the observed reason. | yes |
-| `retires` | determined during integration after success or failure; default none unless recorded evidence identifies a proposition as settled or refuted and both principals approve retirement | yes |
-
-**Hypothesis**
-
-- A single real, agreed, executed change produces information the text cannot generate from inside itself — most likely about the cost of agreeing, not about houses.
-- 'Superficial' will prove harder to define than to do; the negotiation over what counts will be more informative than the change.
-
-**Integration:** *empty until the milestone lands or fails*
